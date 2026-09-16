@@ -1,0 +1,242 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-white text-ink font-sans antialiased;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* scrollbar - thoda slim, UI jaisa */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full border-2 border-solid border-transparent bg-clip-content;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 bg-clip-content;
+  }
+}
+
+@layer components {
+  /* ---------------- buttons ---------------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold transition
+           focus:outline-none focus-visible:shadow-focus disabled:opacity-60 disabled:cursor-not-allowed
+           whitespace-nowrap;
+  }
+  .btn-sm {
+    @apply text-[13px] px-3 py-1.5;
+  }
+  .btn-md {
+    @apply text-sm px-4 py-2.5;
+  }
+  .btn-lg {
+    @apply text-[15px] px-5 py-3;
+  }
+
+  .btn-primary {
+    @apply bg-brand-700 text-white hover:bg-brand-800 active:bg-brand-900 shadow-[0_1px_2px_rgba(15,23,42,.08)];
+  }
+  .btn-outline {
+    @apply bg-white text-ink border border-line hover:bg-slate-50 hover:border-slate-300;
+  }
+  .btn-ghost {
+    @apply bg-transparent text-ink-muted hover:bg-slate-100 hover:text-ink;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+  .btn-danger-soft {
+    @apply bg-red-50 text-red-600 border border-red-100 hover:bg-red-100;
+  }
+
+  /* ---------------- inputs ---------------- */
+  .input {
+    @apply w-full rounded-[10px] border border-line bg-white px-3.5 py-2.5 text-sm text-ink
+           placeholder:text-ink-soft transition
+           focus:outline-none focus:border-brand-500 focus:shadow-focus;
+  }
+  .input-error {
+    @apply border-red-400 focus:border-red-500 focus:shadow-[0_0_0_4px_rgba(239,68,68,.12)];
+  }
+  .label {
+    @apply block text-[13px] font-medium text-ink mb-1.5;
+  }
+  .field-error {
+    @apply mt-1.5 text-xs text-red-600 flex items-center gap-1;
+  }
+
+  /* ---------------- surfaces ---------------- */
+  .card {
+    @apply bg-white border border-line rounded-2xl shadow-card;
+  }
+  .card-hover {
+    @apply transition hover:border-slate-300 hover:shadow-pop;
+  }
+  .sidebar-link {
+    @apply flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium text-ink-muted
+           transition hover:bg-slate-100 hover:text-ink;
+  }
+  .sidebar-link-active {
+    @apply bg-brand-50 text-brand-700 hover:bg-brand-50 hover:text-brand-700;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700;
+  }
+  .chip-muted {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-ink-muted;
+  }
+  .kbd {
+    @apply inline-flex items-center rounded border border-line bg-slate-50 px-1.5 py-0.5 text-[11px] font-medium text-ink-muted;
+  }
+  .divider {
+    @apply h-px w-full bg-line;
+  }
+  .table-head {
+    @apply text-left text-[11px] font-semibold uppercase tracking-wide text-ink-soft;
+  }
+}
+
+/* ---------------- TipTap editor ---------------- */
+.ProseMirror {
+  outline: none;
+  min-height: 340px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #0f172a;
+}
+.ProseMirror > * + * {
+  margin-top: 0.85em;
+}
+.ProseMirror h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.ProseMirror h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.ProseMirror h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.35rem;
+}
+.ProseMirror ul {
+  list-style: disc;
+}
+.ProseMirror ol {
+  list-style: decimal;
+}
+.ProseMirror li p {
+  margin: 0.15em 0;
+}
+.ProseMirror a {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+.ProseMirror code {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+  font-size: 0.875em;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+.ProseMirror pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ProseMirror pre code {
+  background: transparent;
+  border: none;
+  color: inherit;
+  padding: 0;
+  font-size: 13px;
+}
+.ProseMirror blockquote {
+  border-left: 3px solid #cbd5e1;
+  padding-left: 14px;
+  color: #475569;
+}
+.ProseMirror img {
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+.ProseMirror img.ProseMirror-selectednode {
+  outline: 3px solid #93c5fd;
+}
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 1.4em 0;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #94a3b8;
+  pointer-events: none;
+  height: 0;
+}
+.ProseMirror ul[data-type='taskList'] {
+  list-style: none;
+  padding-left: 0;
+}
+.ProseMirror ul[data-type='taskList'] li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+/* read-only view */
+.note-view .ProseMirror {
+  min-height: auto;
+}
+
+/* line clamp helper */
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* hide scrollbar (chip rows) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
