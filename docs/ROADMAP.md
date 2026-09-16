@@ -42,7 +42,7 @@ Notes Heaven is delivered in five phases. Each phase ships as a zip with a merge
 - CORS/cookie configuration for production domains, rate limits review
 - Custom domain checklist (optional)
 
-## Phase 5 — Hardening & scale
+## Phase 5 — Hardening & scale (done)
 
 - Automated tests: API integration tests (supertest) + frontend component tests (Vitest/Testing Library)
 - CI on GitHub Actions: lint + test + build on every push

@@ -75,6 +75,15 @@ Step-by-step Atlas setup, environment variables and a full test checklist: see [
 Production deployment (Render + Vercel + Atlas): see [`docs/PHASE-4-DEPLOY.md`](docs/PHASE-4-DEPLOY.md).
 Planned work: see [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
+## Tests & CI
+
+```bash
+cd backend && npm test    # API integration suite (in-memory MongoDB)
+cd client  && npm test    # unit tests (vitest)
+```
+
+GitHub Actions (`.github/workflows/ci.yml`) runs both suites plus a production build on every push and pull request.
+
 ## API Overview
 
 All endpoints are prefixed with `/api`.

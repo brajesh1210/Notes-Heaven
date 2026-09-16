@@ -24,7 +24,7 @@ const CloudImage = Image.extend({
       publicId: {
         default: null,
         parseHTML: (el) => el.getAttribute('data-public-id'),
-        renderHTML: (attrs) => (attrs.publicId ? { 'data-public-id': attrs.publicId } : {}),
+        renderHTML: (attrs) => ({ loading: 'lazy', ...(attrs.publicId ? { 'data-public-id': attrs.publicId } : {}) }),
       },
     };
   },

@@ -6,10 +6,12 @@ import cookieParser from 'cookie-parser';
 import routes from './routes/index.js';
 import { env, features } from './config/env.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
+import { apiLimiter } from './middleware/rateLimiter.js';
 import logger from './utils/logger.js';
 
 const app = express();
 
+app.disable('x-powered-by');
 app.set('trust proxy', 1); // Required for secure cookies behind Render/Vercel proxies
 
 // ---- Security ----
@@ -71,7 +73,7 @@ app.get('/api/health', (_req, res) =>
 );
 
 // ---- API routes ----
-app.use('/api', routes);
+app.use('/api', apiLimiter, routes);
 
 // ---- 404 + error handler (hamesha last) ----
 app.use(notFoundHandler);

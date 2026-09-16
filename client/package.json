@@ -8,6 +8,7 @@
     "dev": "vite",
     "dev:demo": "cross-env VITE_DEMO_MODE=true vite",
     "build": "vite build",
+    "test": "vitest run",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
+    "vitest": "^1.6.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",

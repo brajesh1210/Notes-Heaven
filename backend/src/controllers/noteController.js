@@ -52,6 +52,13 @@ const folderMapFor = async (userId) => {
   return new Map(folders.map((f) => [String(f._id), f]));
 };
 
+/** Strip script tags / inline handlers / javascript: URLs from stored HTML (defense in depth) */
+const sanitizeHtml = (html) =>
+  String(html || '')
+    .replace(/<script[\s\S]*?<\/script\s*>/gi, '')
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/javascript:/gi, '');
+
 /** tags: array of names -> Tag docs (missing tags are created on the fly) */
 const resolveTags = async (userId, names = []) => {
   const clean = [...new Set(names.map((n) => String(n).trim().toLowerCase()).filter(Boolean))].slice(0, 12);
@@ -129,7 +136,7 @@ export const createNote = asyncHandler(async (req, res) => {
     user: req.userId,
     title: String(title || '').trim() || 'Untitled note',
     content: content || { type: 'doc', content: [{ type: 'paragraph' }] },
-    contentHtml: contentHtml || '',
+    contentHtml: sanitizeHtml(contentHtml),
     folder: folder || null,
     tags: tagIds,
     isPinned: Boolean(isPinned),
@@ -172,7 +179,7 @@ export const updateNote = asyncHandler(async (req, res) => {
 
   if (title !== undefined) note.title = String(title).trim() || 'Untitled note';
   if (content !== undefined) note.content = content;
-  if (contentHtml !== undefined) note.contentHtml = contentHtml;
+  if (contentHtml !== undefined) note.contentHtml = sanitizeHtml(contentHtml);
   if (folder !== undefined) {
     if (folder) {
       const f = await Folder.findOne({ _id: folder, user: req.userId });
@@ -204,7 +211,7 @@ export const autosaveNote = asyncHandler(async (req, res) => {
   const { title, content, contentHtml } = req.body;
   if (title !== undefined) note.title = String(title).trim() || 'Untitled note';
   if (content !== undefined) note.content = content;
-  if (contentHtml !== undefined) note.contentHtml = contentHtml;
+  if (contentHtml !== undefined) note.contentHtml = sanitizeHtml(contentHtml);
   note.lastEditedAt = new Date();
 
   await note.save();

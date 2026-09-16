@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 
 // layouts
@@ -13,17 +14,19 @@ import ResetPassword from './pages/auth/ResetPassword.jsx';
 import OAuthCallback from './pages/auth/OAuthCallback.jsx';
 import NotFound from './pages/NotFound.jsx';
 
-// app pages
+// app pages (dashboard/all-notes stay eager; heavy pages load on demand)
 import Dashboard from './pages/Dashboard.jsx';
 import AllNotes from './pages/AllNotes.jsx';
 import Folders from './pages/Folders.jsx';
 import FolderDetail from './pages/FolderDetail.jsx';
 import Trash from './pages/Trash.jsx';
-import SearchResults from './pages/SearchResults.jsx';
-import CreateNote from './pages/notes/CreateNote.jsx';
-import NoteEditorPage from './pages/notes/NoteEditorPage.jsx';
-import NoteView from './pages/notes/NoteView.jsx';
-import Profile from './pages/Profile.jsx';
+import { PageLoader } from './components/ui/Spinner.jsx';
+
+const SearchResults = lazy(() => import('./pages/SearchResults.jsx'));
+const CreateNote = lazy(() => import('./pages/notes/CreateNote.jsx'));
+const NoteEditorPage = lazy(() => import('./pages/notes/NoteEditorPage.jsx'));
+const NoteView = lazy(() => import('./pages/notes/NoteView.jsx'));
+const Profile = lazy(() => import('./pages/Profile.jsx'));
 
 /**
  * Routes:
@@ -32,6 +35,7 @@ import Profile from './pages/Profile.jsx';
  *             /folders , /folders/:id , /search , /trash , /profile
  */
 const App = () => (
+  <Suspense fallback={<PageLoader label="Loading..." />}>
   <Routes>
     <Route path="/" element={<Landing />} />
 
@@ -73,6 +77,7 @@ const App = () => (
     <Route path="/404" element={<NotFound />} />
     <Route path="*" element={<Navigate to="/404" replace />} />
   </Routes>
+  </Suspense>
 );
 
 export default App;

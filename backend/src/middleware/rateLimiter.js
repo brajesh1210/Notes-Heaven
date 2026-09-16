@@ -29,3 +29,12 @@ export const uploadLimiter = rateLimit({
   legacyHeaders: false,
   handler,
 });
+
+/** Global API guard: 300 requests / 5 min per IP (abuse protection for every endpoint) */
+export const apiLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  limit: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many requests, please slow down and try again' },
+});
