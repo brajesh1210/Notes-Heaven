@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/utils.js';
 
-/** Simple accessible modal (ESC se band, backdrop click se band) */
+/** Simple accessible modal (closes on ESC or backdrop click) */
 const Modal = ({ open, onClose, title, description, children, footer, size = 'md', className }) => {
   useEffect(() => {
     if (!open) return;

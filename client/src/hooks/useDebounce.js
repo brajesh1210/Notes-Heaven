@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-/** value ko debounce karta hai (search input ke liye) */
+/** Debounces a value (used by the search input) */
 export const useDebounce = (value, delay = 350) => {
   const [debounced, setDebounced] = useState(value);
 

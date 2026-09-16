@@ -3,7 +3,7 @@ import { tooMany } from '../utils/ApiError.js';
 
 const handler = (req, res, next) => next(tooMany());
 
-/** Login/Signup brute-force protection: 15 min me 30 attempts */
+/** Login/Signup brute-force protection: 30 attempts per 15 minutes */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 30,
@@ -12,7 +12,7 @@ export const authLimiter = rateLimit({
   handler,
 });
 
-/** Forgot password: 15 min me 10 mail requests */
+/** Forgot password: 10 mail requests per 15 minutes */
 export const mailLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
@@ -21,7 +21,7 @@ export const mailLimiter = rateLimit({
   handler,
 });
 
-/** Image upload: 1 hour me 100 uploads */
+/** Image upload: 100 uploads per hour */
 export const uploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 100,

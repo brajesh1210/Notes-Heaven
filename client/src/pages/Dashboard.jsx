@@ -42,7 +42,7 @@ const Dashboard = () => {
   return (
     <div>
       <PageHeader
-        title={`${greeting()}, ${firstName}! 👋`}
+        title={`${greeting()}, ${firstName}!`}
         subtitle="Keep going! Your notes are your superpower."
         actions={
           <Button icon={Plus} onClick={() => navigate('/notes/new')}>
@@ -69,7 +69,7 @@ const Dashboard = () => {
             label="Last Updated"
             value={stats?.lastUpdated ? friendlyDate(stats.lastUpdated) : '—'}
             tone="violet"
-            hint={stats?.trashCount ? `${stats.trashCount} in trash` : 'Trash khaali hai'}
+            hint={stats?.trashCount ? `${stats.trashCount} in trash` : 'Trash is empty'}
           />
         </div>
       )}
@@ -83,7 +83,7 @@ const Dashboard = () => {
           <Pin size={12} /> Pinned {stats?.pinned ? `(${stats.pinned})` : ''}
         </Link>
         <Link to="/trash" className="chip-muted hover:bg-brand-50 hover:text-brand-700">
-          🗑️ Trash {stats?.trashCount ? `(${stats.trashCount})` : ''}
+          Trash {stats?.trashCount ? `(${stats.trashCount})` : ''}
         </Link>
       </div>
 
@@ -101,8 +101,8 @@ const Dashboard = () => {
         ) : notes.length === 0 ? (
           <EmptyState
             icon={Sparkles}
-            title="Abhi koi note nahi hai"
-            description="Pehla note likho - title, content, folder aur tags ke saath. Baad me search aur export bhi kar sakoge."
+            title="No notes yet"
+            description="Write your first note - with a title, rich content, folder and tags. Search and export are always one click away."
             action={
               <Button icon={Plus} onClick={() => navigate('/notes/new')}>
                 Create your first note

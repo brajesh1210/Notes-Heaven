@@ -16,7 +16,7 @@ import { cn } from '../../lib/utils.js';
 
 const lowlight = createLowlight(common);
 
-/** Image extension + Cloudinary publicId attr (delete ke liye kaam aata hai) */
+/** Image extension + Cloudinary publicId attribute (used when deleting images) */
 const CloudImage = Image.extend({
   addAttributes() {
     return {
@@ -33,7 +33,7 @@ const CloudImage = Image.extend({
 const buildExtensions = (placeholder) => [
   StarterKit.configure({
     heading: { levels: [1, 2, 3] },
-    codeBlock: false, // lowlight wala use karenge
+    codeBlock: false, // the lowlight-powered code block is used instead
     horizontalRule: {},
   }),
   Underline,
@@ -49,7 +49,7 @@ const buildExtensions = (placeholder) => [
  * NoteEditor
  *   content    -> TipTap JSON | null
  *   onChange   -> ({ json, html, text, words })
- *   editable   -> false kar do to read-only view ban jata hai (Note View page)
+ *   editable   -> set false for a read-only view (Note View page)
  */
 const NoteEditor = ({ content, onChange, placeholder = 'Start writing your note...', editable = true, onReady, className, minHeight }) => {
   const toast = useToast();
@@ -95,7 +95,7 @@ const NoteEditor = ({ content, onChange, placeholder = 'Start writing your note.
     },
   });
 
-  // bahar se content badle (note load hone par) to editor sync karo
+  // keep the editor in sync when content changes from outside (note load)
   useEffect(() => {
     if (!editor || !content) return;
     if (lastEmitted.current === content) return;
@@ -113,12 +113,12 @@ const NoteEditor = ({ content, onChange, placeholder = 'Start writing your note.
     editor?.setEditable(editable);
   }, [editable, editor]);
 
-  /** image -> Cloudinary -> editor me insert */
+  /** image -> Cloudinary -> insert into the editor */
   const uploadAndInsert = async (file) => {
     if (!editor) return;
-    if (file.size > 8 * 1024 * 1024) return toast.error('Image 8MB se chhoti honi chahiye');
+    if (file.size > 8 * 1024 * 1024) return toast.error('Images must be smaller than 8 MB');
 
-    // turant local preview dikha do (feel fast)
+    // show a local preview immediately (feels fast)
     const localUrl = URL.createObjectURL(file);
     const { from } = editor.state.selection;
     editor.chain().focus().insertContentAt(from, { type: 'image', attrs: { src: localUrl } }).run();
@@ -127,7 +127,7 @@ const NoteEditor = ({ content, onChange, placeholder = 'Start writing your note.
       setUploading(true);
       const { data } = await api.upload(file);
       const url = data.image.url;
-      // local preview ko asli URL se replace karo
+      // replace the local preview with the uploaded URL
       const { doc, tr } = editor.state;
       let replaced = false;
       doc.descendants((node, pos) => {
@@ -138,10 +138,10 @@ const NoteEditor = ({ content, onChange, placeholder = 'Start writing your note.
         }
       });
       if (replaced) editor.view.dispatch(tr);
-      toast.success('Image add ho gayi 🖼️');
+      toast.success('Image added');
     } catch (e) {
-      toast.error(e.message || 'Image upload fail hua');
-      // fail hone par local preview hata do
+      toast.error(e.message || 'Image upload failed');
+      // remove the local preview if the upload fails
       const { doc, tr } = editor.state;
       doc.descendants((node, pos) => {
         if (node.type.name === 'image' && node.attrs.src === localUrl) tr.delete(pos, pos + node.nodeSize);

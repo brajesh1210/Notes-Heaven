@@ -41,7 +41,7 @@ const AllNotes = () => {
 
       let list = data.notes || [];
 
-      // tag filter (client side - simple aur fast)
+      // tag filter (client side - simple and fast)
       if (activeTags.length) {
         list = list.filter((n) => (n.tags || []).some((t) => activeTags.includes(t.name)));
       }
@@ -143,9 +143,9 @@ const AllNotes = () => {
       ) : notes.length === 0 ? (
         <EmptyState
           icon={FileText}
-          title={activeFilters ? 'In filters me koi note nahi mila' : 'Abhi koi note nahi hai'}
+          title={activeFilters ? 'No notes match these filters' : 'No notes yet'}
           description={
-            activeFilters ? 'Filters hata ke dobara dekho.' : 'Naya note bana ke shuru karo - folders, tags aur rich content ke saath.'
+            activeFilters ? 'Try removing some filters.' : 'Create your first note - with folders, tags and rich content.'
           }
           action={
             activeFilters ? (

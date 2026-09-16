@@ -9,8 +9,8 @@ import { cn } from '../../lib/utils.js';
 
 /**
  * Folder create / edit / delete modal.
- * - parent select se nested folder bana sakte ho
- * - edit mode me delete button bhi dikhta hai
+ * - the parent select allows nested folders
+ * - in edit mode a delete button is shown as well
  */
 const FolderModal = ({ open, onClose, folder = null, defaultParent = null }) => {
   const { flatOptions, createFolder, updateFolder, deleteFolder } = useFolders();
@@ -33,7 +33,7 @@ const FolderModal = ({ open, onClose, folder = null, defaultParent = null }) => 
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return setError('Folder name daalo');
+    if (!name.trim()) return setError('Please enter a folder name');
 
     setSaving(true);
     setError('');
@@ -60,7 +60,7 @@ const FolderModal = ({ open, onClose, folder = null, defaultParent = null }) => 
     }
   };
 
-  // khud ya uska child parent na ban sake
+  // a folder (or one of its own subfolders) cannot become its parent
   const options = flatOptions.filter((f) => f.id !== folder?.id);
 
   return (
@@ -68,7 +68,7 @@ const FolderModal = ({ open, onClose, folder = null, defaultParent = null }) => 
       open={open}
       onClose={onClose}
       title={isEdit ? 'Edit folder' : 'New folder'}
-      description={isEdit ? 'Naam, color ya parent folder change karo.' : 'Apne notes ko organized rakhne ke liye folder banao.'}
+      description={isEdit ? 'Change the name, color or parent folder.' : 'Create folders to keep your notes organized.'}
       size="sm"
       footer={
         <>
@@ -112,7 +112,7 @@ const FolderModal = ({ open, onClose, folder = null, defaultParent = null }) => 
               </option>
             ))}
           </select>
-          <p className="mt-1.5 text-xs text-ink-soft">Parent select karne se nested folder banega (e.g. Class 12 → Physics).</p>
+          <p className="mt-1.5 text-xs text-ink-soft">Selecting a parent creates a nested folder (e.g. Class 12 → Physics).</p>
         </div>
 
         <div>

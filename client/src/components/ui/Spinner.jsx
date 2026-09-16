@@ -11,7 +11,7 @@ export const PageLoader = ({ label = 'Loading...' }) => (
   </div>
 );
 
-/** list skeleton - notes load hote waqt */
+/** list skeleton - shown while notes load */
 export const SkeletonList = ({ rows = 5 }) => (
   <div className="space-y-2">
     {Array.from({ length: rows }).map((_, i) => (

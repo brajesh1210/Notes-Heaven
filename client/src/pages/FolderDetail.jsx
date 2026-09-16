@@ -13,7 +13,7 @@ import { useFolders } from '../context/FoldersContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { cn, pluralize } from '../lib/utils.js';
 
-/** Folder tree me se kisi node ke children nikalo */
+/** Get the children of a node in the folder tree */
 const findChildren = (nodes, id) => {
   for (const node of nodes) {
     if (node.id === id) return node.children || [];
@@ -23,7 +23,7 @@ const findChildren = (nodes, id) => {
   return [];
 };
 
-/** Ek folder ka page: breadcrumb, subfolders aur us folder ke notes */
+/** One folder's page: breadcrumb, subfolders and the folder's notes */
 const FolderDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -59,8 +59,8 @@ const FolderDetail = () => {
     return (
       <EmptyState
         icon={FolderOpen}
-        title="Folder nahi mila"
-        description="Shayad ye delete ho gaya hai ya link purana hai."
+        title="Folder not found"
+        description="It may have been deleted, or the link is outdated."
         action={
           <Button variant="outline" onClick={() => navigate('/folders')}>
             Saare folders dekho
@@ -133,14 +133,14 @@ const FolderDetail = () => {
         </div>
       )}
 
-      {/* is folder ke notes */}
+      {/* notes inside this folder */}
       {loading ? (
         <SkeletonList rows={5} />
       ) : notes.length === 0 ? (
         <EmptyState
           icon={FileText}
-          title="Is folder me koi note nahi hai"
-          description="Yahan naya note banao - folder already selected rahega."
+          title="This folder has no notes yet"
+          description="Create a note here - the folder stays pre-selected."
           action={
             <Button icon={Plus} onClick={() => navigate(`/notes/new?folder=${id}`)}>
               New Note

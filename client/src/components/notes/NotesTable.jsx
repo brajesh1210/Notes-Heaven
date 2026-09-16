@@ -3,7 +3,7 @@ import { FileText, Pin, Star } from 'lucide-react';
 import { timeAgo } from '../../lib/utils.js';
 import NoteActionsMenu from './NoteActionsMenu.jsx';
 
-/** All Notes page ka table view (design: Title | Folder | Last Modified) */
+/** Table view for the All Notes page (design: Title | Folder | Last Modified) */
 const NotesTable = ({ notes, onChanged, onRemoved, showSnippet = true }) => (
   <div className="card overflow-hidden">
     {/* header - desktop only */}

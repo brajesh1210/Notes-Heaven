@@ -1,9 +1,9 @@
 /**
  * DEMO MODE - in-memory mini-backend.
  *
- * Sirf UI dikhane / testing ke liye. `npm run dev:demo` se chalta hai.
- * Real app me ye file use nahi hoti - wahan asli Express backend chalta hai.
- * Yahan jo logic hai wo backend ke controllers ka simplified version hai.
+ * Only for UI demos and testing. Runs via `npm run dev:demo`.
+ * Not used in the real app - there the Express backend handles requests.
+ * The logic here is a simplified version of the backend controllers.
  */
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -105,15 +105,15 @@ const mkNote = (id, title, folderId, tagIds, nodes, { hours = 2, pinned = false,
 
 db.notes = [
   mkNote('n1', 'Business Environment - Chapter 1', 'f1', ['t1'], [h('1. Introduction'), ul(['Business environment refers to the sum total of all internal and external factors that influence a business.', 'It includes economic, social, political, legal, technological and natural factors.', 'It helps in identifying opportunities and threats.']), h('2. Components'), ol(['Internal Environment', 'External Environment'])], { hours: 2, pinned: true, fav: true }),
-  mkNote('n2', 'Microeconomics - Introduction', 'f3', ['t2', 't4'], [h('Microeconomics kya hai?'), ul(['Individual unit level study', 'Demand & supply, elasticity, market structures']), pre('const revenue = (price, qty) => price * qty;')], { hours: 4 }),
-  mkNote('n3', 'JEE Physics - Motion in a Straight Line', 'f5', ['t3', 't4'], [h('Key Formulas'), ol(['v = u + at', 's = ut + ½at²', 'v² = u² + 2as']), p('v-t graph ka slope = acceleration, area = displacement.'), pre('// relative velocity\nv_ab = v_a - v_b;')], { hours: 6, fav: true }),
-  mkNote('n4', 'Chemistry - Periodic Table', 'f4', [], [h('Groups & Periods'), ul(['Group me properties similar', 'Period me left se right metallic character ghatta hai'])], { hours: 24 }),
+  mkNote('n2', 'Microeconomics - Introduction', 'f3', ['t2', 't4'], [h('What is Microeconomics?'), ul(['Individual unit level study', 'Demand & supply, elasticity, market structures']), pre('const revenue = (price, qty) => price * qty;')], { hours: 4 }),
+  mkNote('n3', 'JEE Physics - Motion in a Straight Line', 'f5', ['t3', 't4'], [h('Key Formulas'), ol(['v = u + at', 's = ut + ½at²', 'v² = u² + 2as']), p('Slope of the v-t graph = acceleration, area = displacement.'), pre('// relative velocity\nv_ab = v_a - v_b;')], { hours: 6, fav: true }),
+  mkNote('n4', 'Chemistry - Periodic Table', 'f4', [], [h('Groups & Periods'), ul(['Elements in a group share similar properties', 'Metallic character decreases from left to right across a period'])], { hours: 24 }),
   mkNote('n5', 'Personal Goals', 'f6', ['t5'], [h('2026 Goals'), ol(['Daily 2 hours DSA', 'Notes Heaven launch', 'Gym 5 days/week'])], { hours: 24 }),
-  mkNote('n6', 'Business Studies Notes', 'f2', ['t1', 't5'], [p('Management principles, planning, organising, staffing, directing aur controlling ke notes.')], { hours: 24 }),
-  mkNote('n7', 'Business Environment - Important Questions', 'f2', ['t1', 't4'], [p('Q1. Business environment ke features? Q2. Micro vs macro environment difference?')], { hours: 24 }),
+  mkNote('n6', 'Business Studies Notes', 'f2', ['t1', 't5'], [p('Notes on management principles: planning, organising, staffing, directing and controlling.')], { hours: 24 }),
+  mkNote('n7', 'Business Environment - Important Questions', 'f2', ['t1', 't4'], [p('Q1. Features of the business environment? Q2. Difference between micro and macro environment?')], { hours: 24 }),
   mkNote('n8', 'Principles of Management', 'f3', ['t1'], [ul(['Division of work', 'Authority & responsibility', 'Unity of command', 'Scalar chain'])], { hours: 72 }),
-  mkNote('n9', 'Business Environment - Summary', 'f1', ['t1'], [p('Chapter 1 ka quick revision summary.')], { hours: 96 }),
-  mkNote('n10', 'Old meeting notes', 'f7', [], [p('Ye note trash me hai - 5 din baad auto delete ho jayega.')], { hours: 120, trashed: true }),
+  mkNote('n9', 'Business Environment - Summary', 'f1', ['t1'], [p('Quick revision summary of Chapter 1.')], { hours: 96 }),
+  mkNote('n10', 'Old meeting notes', 'f7', [], [p('This note is in the trash - it will be auto-deleted after 5 days.')], { hours: 120, trashed: true }),
 ];
 
 // ------------------------------------------------------------ helpers
@@ -197,16 +197,16 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
 
   if (path === 'auth/register' && m === 'post') {
     db.user = { ...db.user, name: data.name || db.user.name, email: data.email || db.user.email };
-    return okRes({ user: db.user, token: 'demo-token' }, 'Account ban gaya! Welcome to Notes Heaven 🎉');
+    return okRes({ user: db.user, token: 'demo-token' }, 'Account created! Welcome to Notes Heaven');
   }
 
-  if (path === 'auth/logout') return okRes({}, 'Logout ho gaya');
+  if (path === 'auth/logout') return okRes({}, 'Logged out successfully');
   if (path === 'auth/profile' && m === 'put') {
     db.user = { ...db.user, ...data };
-    return okRes({ user: db.user }, 'Profile update ho gaya');
+    return okRes({ user: db.user }, 'Profile updated');
   }
   if (path === 'auth/forgot-password') {
-    return okRes({ mailConfigured: false, devResetUrl: '/reset-password/demo-token' }, 'Agar ye email registered hai to reset link bhej diya gaya hai.');
+    return okRes({ mailConfigured: false, devResetUrl: '/reset-password/demo-token' }, 'If this email is registered, a reset link has been sent.');
   }
   if (path === 'auth/providers') return okRes({ enabled: true, mailerEnabled: false, uploadsEnabled: false }, 'providers');
 
@@ -241,17 +241,17 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
           isFavorite: false,
         };
         db.folders.push(f);
-        return okRes({ folder: { ...f, noteCount: 0 } }, 'Folder ban gaya');
+        return okRes({ folder: { ...f, noteCount: 0 } }, 'Folder created');
       }
     }
     const f = db.folders.find((x) => x.id === seg[1]);
-    if (!f) return err(404, 'Folder nahi mila');
+    if (!f) return err(404, 'Folder not found');
     if (m === 'get') return okRes({ folder: { ...f, noteCount: db.notes.filter((n) => n.folderId === f.id && !n.trashedAt).length } }, 'Folder loaded');
     if (m === 'put') {
       if (data.name) f.name = data.name;
       if (data.color) f.color = data.color;
       if (data.isFavorite !== undefined) f.isFavorite = data.isFavorite;
-      return okRes({ folder: f }, 'Folder update ho gaya');
+      return okRes({ folder: f }, 'Folder updated');
     }
     if (m === 'patch' && seg[2] === 'favorite') {
       f.isFavorite = data.value === undefined ? !f.isFavorite : data.value;
@@ -267,7 +267,7 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
         n.isPinned = false;
       });
       db.folders = db.folders.filter((x) => !ids.includes(x.id));
-      return okRes({ deletedFolders: ids.length, trashedNotes: trashed.length }, 'Folder delete hua, notes trash me chale gaye');
+      return okRes({ deletedFolders: ids.length, trashedNotes: trashed.length }, 'Folder deleted, notes moved to trash');
     }
   }
 
@@ -281,17 +281,17 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
   if (path === 'tags' && m === 'post') {
     const name = String(data.name || '').trim().toLowerCase();
     const existing = db.tags.find((t) => t.name === name);
-    if (existing) return okRes({ tag: existing }, 'Ye tag already exist karta hai');
+    if (existing) return okRes({ tag: existing }, 'This tag already exists');
     const tag = { id: uid(), name, color: data.color || '#64748B' };
     db.tags.push(tag);
-    return okRes({ tag }, 'Tag create ho gaya');
+    return okRes({ tag }, 'Tag created');
   }
   if (seg[0] === 'tags' && seg[1] && m === 'delete') {
     db.tags = db.tags.filter((t) => t.id !== seg[1]);
     db.notes.forEach((n) => {
       n.tagIds = n.tagIds.filter((t) => t !== seg[1]);
     });
-    return okRes({ id: seg[1] }, 'Tag delete ho gaya');
+    return okRes({ id: seg[1] }, 'Tag deleted');
   }
 
   // ---------------- search ----------------
@@ -352,7 +352,7 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
       if (m === 'delete') {
         const count = db.notes.filter((n) => n.trashedAt).length;
         db.notes = db.notes.filter((n) => !n.trashedAt);
-        return okRes({ deletedCount: count }, `${count} note permanently delete ho gaye`);
+        return okRes({ deletedCount: count }, `${count} notes permanently deleted`);
       }
     }
 
@@ -392,12 +392,12 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
           versions: [],
         };
         db.notes.unshift(n);
-        return okRes({ note: ser(n, true) }, 'Note create ho gaya 🎉');
+        return okRes({ note: ser(n, true) }, 'Note created');
       }
     }
 
     const n = db.notes.find((x) => x.id === sub);
-    if (!n) return err(404, 'Note nahi mila');
+    if (!n) return err(404, 'Note not found');
 
     if (!seg[2]) {
       if (m === 'get') return okRes({ note: ser(n, true) }, 'Note loaded');
@@ -414,13 +414,13 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
         if (data.isFavorite !== undefined) n.isFavorite = data.isFavorite;
         n.updatedAt = now();
         n.lastEditedAt = now();
-        return okRes({ note: ser(n, true) }, 'Note update ho gaya');
+        return okRes({ note: ser(n, true) }, 'Note updated');
       }
       if (m === 'delete') {
         n.trashedAt = now();
         n.scheduledFor = new Date(Date.now() + db.trashDays * 86400000).toISOString();
         n.isPinned = false;
-        return okRes({ note: ser(n) }, 'Note trash me chala gaya - 5 din baad permanently delete ho jayega');
+        return okRes({ note: ser(n) }, 'Note moved to trash - permanently deleted after 5 days');
       }
     }
 
@@ -438,29 +438,29 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
     if (seg[2] === 'restore' && m === 'patch') {
       n.trashedAt = null;
       n.scheduledFor = null;
-      return okRes({ note: ser(n) }, 'Note wapas restore ho gaya 🎉');
+      return okRes({ note: ser(n) }, 'Note restored');
     }
     if (seg[2] === 'permanent' && m === 'delete') {
       db.notes = db.notes.filter((x) => x.id !== n.id);
-      return okRes({ id: n.id }, 'Note permanently delete ho gaya');
+      return okRes({ id: n.id }, 'Note permanently deleted');
     }
     if (seg[2] === 'duplicate' && m === 'post') {
       const copy = { ...n, id: uid(), title: `${n.title} (copy)`, createdAt: now(), updatedAt: now(), lastEditedAt: now() };
       db.notes.unshift(copy);
-      return okRes({ note: ser(copy, true) }, 'Note duplicate ho gaya');
+      return okRes({ note: ser(copy, true) }, 'Note duplicated');
     }
     if (seg[2] === 'pin' && m === 'patch') {
       n.isPinned = data.value === undefined ? !n.isPinned : data.value;
-      return okRes({ id: n.id, isPinned: n.isPinned }, n.isPinned ? 'Note pin ho gaya 📌' : 'Pin hata diya');
+      return okRes({ id: n.id, isPinned: n.isPinned }, n.isPinned ? 'Note pinned' : 'Note unpinned');
     }
     if (seg[2] === 'favorite' && m === 'patch') {
       n.isFavorite = data.value === undefined ? !n.isFavorite : data.value;
-      return okRes({ id: n.id, isFavorite: n.isFavorite }, n.isFavorite ? 'Favorite me add ho gaya ⭐' : 'Favorite se hata diya');
+      return okRes({ id: n.id, isFavorite: n.isFavorite }, n.isFavorite ? 'Added to favorites' : 'Removed from favorites');
     }
     if (seg[2] === 'versions' && m === 'get') return okRes({ versions: n.versions.map((v, i) => ({ ...v, index: i })) }, 'Versions loaded');
   }
 
-  return err(404, `Demo API: route nahi mila -> ${method} ${url}`);
+  return err(404, `Demo API: no route for ${method} ${url}`);
 };
 
 export default demoApi;

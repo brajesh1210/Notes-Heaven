@@ -7,7 +7,7 @@ const router = Router();
 // sab note routes protected
 router.use(protect);
 
-// stats / trash / export ( :id wale routes se pehle rakho )
+// stats / trash / export (keep these before the :id routes)
 router.get('/stats/dashboard', notes.dashboardStats);
 router.get('/trash', notes.listTrash);
 router.delete('/trash/empty', notes.emptyTrash);

@@ -76,7 +76,7 @@ const SearchResults = () => {
     <div>
       <PageHeader
         title={q ? `Search Results for "${q}"` : 'Search'}
-        subtitle={loading ? 'Dhundh rahe hain...' : `${total} result${total === 1 ? '' : 's'}`}
+        subtitle={loading ? 'Searching...' : `${total} result${total === 1 ? '' : 's'}`}
         actions={
           <Button
             variant="outline"
@@ -168,8 +168,8 @@ const SearchResults = () => {
       ) : notes.length === 0 ? (
         <EmptyState
           icon={Search}
-          title={q ? `"${q}" ke liye kuch nahi mila` : 'Search karo'}
-          description="Dusre keyword se try karo - title, content, tag ya folder naam se search kar sakte ho."
+          title={q ? `No results for "${q}"` : 'Search your notes'}
+          description="Try a different keyword - search covers titles, content, tags and folder names."
           action={
             <Button variant="outline" onClick={() => navigate('/notes')}>
               Saare notes dekho

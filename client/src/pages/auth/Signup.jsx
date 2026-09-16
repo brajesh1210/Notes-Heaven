@@ -41,12 +41,12 @@ const Signup = () => {
   const submit = async (e) => {
     e.preventDefault();
     const errs = {};
-    if (!form.name.trim()) errs.name = 'Apna naam daalo';
-    else if (form.name.trim().length < 2) errs.name = 'Naam kam se kam 2 characters';
-    if (!form.email.trim()) errs.email = 'Email daalo';
-    else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = 'Valid email daalo';
-    if (!form.password) errs.password = 'Password daalo';
-    else if (form.password.length < 6) errs.password = 'Password kam se kam 6 characters';
+    if (!form.name.trim()) errs.name = 'Name is required';
+    else if (form.name.trim().length < 2) errs.name = 'Name must be at least 2 characters';
+    if (!form.email.trim()) errs.email = 'Email is required';
+    else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = 'Please enter a valid email address';
+    if (!form.password) errs.password = 'Password is required';
+    else if (form.password.length < 6) errs.password = 'Password must be at least 6 characters';
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
@@ -56,7 +56,7 @@ const Signup = () => {
       navigate('/dashboard', { replace: true });
     } catch (err) {
       toast.error(err.message);
-      if (err.status === 409) setErrors({ email: 'Ye email already registered hai' });
+      if (err.status === 409) setErrors({ email: 'This email is already registered' });
     } finally {
       setLoading(false);
     }
@@ -125,16 +125,13 @@ const Signup = () => {
         </div>
 
         <Button type="submit" size="lg" loading={loading} className="w-full" icon={UserPlus}>
-          {loading ? 'Account ban raha hai...' : 'Sign Up'}
+          {loading ? 'Creating your account...' : 'Sign Up'}
         </Button>
       </form>
 
       <OrDivider />
 
       <GoogleButton onClick={googleLogin} disabled={!googleEnabled} />
-      {!googleEnabled && (
-        <p className="mt-2 text-center text-[11.5px] text-ink-soft">Google login off hai - backend .env me GOOGLE_CLIENT_ID/SECRET daalo.</p>
-      )}
     </AuthLayout>
   );
 };

@@ -9,7 +9,7 @@ import { useToast } from '../../context/ToastContext.jsx';
 import { exportNoteAsPdf, exportNoteAsMarkdown, exportNoteAsJson } from '../../lib/export.js';
 
 /**
- * Har jagah use hone wala note "..." menu:
+ * The note "..." menu used across the app:
  * Open, Edit, Pin, Favorite, Duplicate, Export (PDF/MD/JSON), Trash, Restore, Delete permanently
  */
 const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 18, className }) => {
@@ -31,7 +31,7 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
   const duplicate = async () => {
     try {
       const { data } = await api.post(`/notes/${note.id}/duplicate`);
-      toast.success('Note duplicate ho gaya');
+      toast.success('Note duplicated');
       onChanged?.();
       navigate(`/notes/${data.note.id}/edit`);
     } catch (e) {
@@ -43,7 +43,7 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
     setBusy(true);
     try {
       const { message } = await api.delete(`/notes/${note.id}`);
-      toast.success(message || 'Note trash me chala gaya');
+      toast.success(message || 'Note moved to trash');
       onRemoved?.('trash');
       onChanged?.();
     } catch (e) {
@@ -58,7 +58,7 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
     setBusy(true);
     try {
       await api.delete(`/notes/${note.id}/permanent`);
-      toast.success('Note permanently delete ho gaya');
+      toast.success('Note permanently deleted');
       onRemoved?.('delete');
       onChanged?.();
     } catch (e) {
@@ -72,7 +72,7 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
   const restore = async () => {
     try {
       await api.patch(`/notes/${note.id}/restore`);
-      toast.success('Note restore ho gaya 🎉');
+      toast.success('Note restored');
       onRemoved?.('restore');
       onChanged?.();
     } catch (e) {
@@ -80,7 +80,7 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
     }
   };
 
-  // Export ke liye poora note (content ke saath) chahiye
+  // exports need the full note (including content)
   const loadFullNote = async () => {
     try {
       const { data } = await api.get(`/notes/${note.id}`);
@@ -100,13 +100,13 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
 
         <MenuItem
           icon={note.isPinned ? PinOff : Pin}
-          onClick={() => patch('/pin', { value: !note.isPinned }, note.isPinned ? 'Pin hata diya' : 'Note pin ho gaya 📌')}
+          onClick={() => patch('/pin', { value: !note.isPinned }, note.isPinned ? 'Note unpinned' : 'Note pinned')}
         >
           {note.isPinned ? 'Unpin' : 'Pin to top'}
         </MenuItem>
         <MenuItem
           icon={note.isFavorite ? StarOff : Star}
-          onClick={() => patch('/favorite', { value: !note.isFavorite }, note.isFavorite ? 'Favorite se hata diya' : 'Favorite me add ho gaya ⭐')}
+          onClick={() => patch('/favorite', { value: !note.isFavorite }, note.isFavorite ? 'Removed from favorites' : 'Added to favorites')}
         >
           {note.isFavorite ? 'Remove favorite' : 'Mark as favorite'}
         </MenuItem>
@@ -128,7 +128,7 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
           onClick={async () => {
             const full = await loadFullNote();
             exportNoteAsMarkdown(full);
-            toast.success('Markdown file download ho gayi');
+            toast.success('Markdown file downloaded');
           }}
         >
           Export as Markdown
@@ -138,7 +138,7 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
           onClick={async () => {
             const full = await loadFullNote();
             exportNoteAsJson(full);
-            toast.success('JSON export ho gaya');
+            toast.success('JSON exported');
           }}
         >
           Export as JSON
@@ -161,8 +161,8 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
         onClose={() => setConfirm(null)}
         onConfirm={doTrash}
         loading={busy}
-        title="Note trash me bhejna hai?"
-        description="Note 5 din tak trash me rahega, uske baad automatically delete ho jayega. Aap kabhi bhi restore kar sakte ho."
+        title="Move note to trash?"
+        description="The note will stay in trash for 5 days before being deleted automatically. You can restore it at any time."
         confirmLabel="Move to trash"
       />
 
@@ -171,8 +171,8 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
         onClose={() => setConfirm(null)}
         onConfirm={doDeleteForever}
         loading={busy}
-        title="Permanently delete karna hai?"
-        description="Ye note hamesha ke liye delete ho jayega. Ye action undo nahi ho sakta."
+        title="Delete permanently?"
+        description="This note will be deleted forever. This action cannot be undone."
         confirmLabel="Delete forever"
       />
     </>

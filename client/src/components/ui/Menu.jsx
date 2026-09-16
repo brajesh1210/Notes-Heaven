@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils.js';
 
-/** Reusable dropdown - "..." menus ke liye (click outside + ESC se band) */
+/** Reusable dropdown for "..." menus (closes on outside click + ESC) */
 const Menu = ({ trigger, children, align = 'right', className, menuClassName }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);

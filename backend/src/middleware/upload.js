@@ -10,7 +10,7 @@ export const upload = multer({
   limits: { fileSize: 8 * 1024 * 1024, files: 1 }, // 8 MB
   fileFilter: (_req, file, cb) => {
     if (!ALLOWED.includes(file.mimetype)) {
-      return cb(badRequest('Sirf JPG, PNG, WEBP, GIF ya SVG image upload kar sakte ho'));
+      return cb(badRequest('Only JPG, PNG, WEBP, GIF or SVG images are allowed'));
     }
     return cb(null, true);
   },

@@ -10,17 +10,17 @@ import logger from './utils/logger.js';
 
 const app = express();
 
-app.set('trust proxy', 1); // Render/Vercel ke peeche secure cookies ke liye
+app.set('trust proxy', 1); // Required for secure cookies behind Render/Vercel proxies
 
 // ---- Security ----
 app.use(
   helmet({
-    crossOriginResourcePolicy: { policy: 'cross-origin' }, // Cloudinary images frontend me load ho sakein
+    crossOriginResourcePolicy: { policy: 'cross-origin' }, // allow Cloudinary images to load in the frontendin
     contentSecurityPolicy: false,
   })
 );
 
-// ---- CORS (credentials ke saath) ----
+// ---- CORS (with credentials) ----
 const allowed = new Set([...env.corsOrigins, env.clientUrl].filter(Boolean));
 
 app.use(
@@ -44,7 +44,7 @@ app.use(cookieParser());
 // ---- Logging ----
 app.use(morgan(features.isProd ? 'combined' : 'dev'));
 
-// ---- Health check (Render ke liye) ----
+// ---- Health check (used by Render) ----
 app.get('/', (_req, res) =>
   res.json({
     success: true,
@@ -58,7 +58,7 @@ app.get('/', (_req, res) =>
 app.get('/api/health', (_req, res) =>
   res.json({
     success: true,
-    message: 'Notes Heaven API is healthy ✅',
+    message: 'Notes Heaven API is healthy',
     uptime: `${Math.floor(process.uptime())}s`,
     env: env.nodeEnv,
     features: {

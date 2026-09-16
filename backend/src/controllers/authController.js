@@ -14,7 +14,7 @@ const setAuthCookie = (res, userId) => {
   res.cookie('nh_token', signToken(userId), cookieOptions());
 };
 
-/** Starter folders - new user ko khaali dashboard na mile (UI jaisa) */
+/** Starter folders so a new user never lands on an empty dashboard */
 const createStarterFolders = async (userId) => {
   const names = ['Class 12', 'JEE Preparation', 'Personal', 'Work'];
   return Folder.insertMany(
@@ -29,7 +29,7 @@ export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
   if (await User.findOne({ email: String(email).toLowerCase() })) {
-    throw conflict('Ye email already registered hai. Login karo ya dusra email use karo.');
+    throw conflict('This email is already registered. Please sign in or use a different email.');
   }
 
   const user = await User.create({ name, email, password, provider: 'local' });
@@ -39,7 +39,7 @@ export const register = asyncHandler(async (req, res) => {
 
   sendWelcomeEmail({ to: user.email, name: user.name }).catch((e) => logger.warn(`Welcome mail failed: ${e.message}`));
 
-  return created(res, { user: user.publicProfile(), token: signToken(user._id) }, 'Account ban gaya! Welcome to Notes Heaven 🎉');
+  return created(res, { user: user.publicProfile(), token: signToken(user._id) }, 'Account created! Welcome to Notes Heaven');
 });
 
 // ------------------------------------------------------------------
@@ -49,14 +49,14 @@ export const login = asyncHandler(async (req, res) => {
   const { email, password, remember = true } = req.body;
 
   const user = await User.findOne({ email: String(email).toLowerCase() }).select('+password');
-  if (!user) throw unauthorized('Email ya password galat hai');
+  if (!user) throw unauthorized('Incorrect email or password');
 
   if (user.provider === 'google' && !user.password) {
-    throw badRequest('Ye account Google se bana hai. "Continue with Google" use karo ya forgot password se password set karo.');
+    throw badRequest('This account was created with Google. Sign in with Google, or set a password via Forgot password.');
   }
 
   const isMatch = await user.comparePassword(password);
-  if (!isMatch) throw unauthorized('Email ya password galat hai');
+  if (!isMatch) throw unauthorized('Incorrect email or password');
 
   const token = signToken(user._id);
   const opts = cookieOptions();
@@ -70,7 +70,7 @@ export const login = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const logout = asyncHandler(async (_req, res) => {
   res.clearCookie('nh_token', { ...cookieOptions(), maxAge: undefined });
-  return ok(res, {}, 'Logout ho gaya');
+  return ok(res, {}, 'Logged out successfully');
 });
 
 // ------------------------------------------------------------------
@@ -85,8 +85,8 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   const email = String(req.body.email).toLowerCase();
   const user = await User.findOne({ email });
 
-  // Security: user exist kare ya na kare, same message (email enumeration se bachne ke liye)
-  const genericMsg = 'Agar ye email registered hai to reset link bhej diya gaya hai. Inbox (aur Spam) check karo.';
+  // Security: same message whether or not the user exists (prevents email enumeration)
+  const genericMsg = 'If this email is registered, a reset link has been sent. Check your inbox (and spam folder).';
   if (!user) return ok(res, { mailConfigured: features.mail }, genericMsg);
 
   const { raw, hashed } = createResetToken();
@@ -102,7 +102,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     logger.error(`Reset mail failed: ${err.message}`);
   }
 
-  // Dev me SMTP na ho to terminal par link dikha dete hain - testing easy
+  // In dev without SMTP, print the reset link to the terminal for easy testing
   if (!features.isProd && !features.mail) {
     logger.warn(`DEV reset link (SMTP off): ${resetUrl}`);
   }
@@ -120,8 +120,8 @@ export const verifyResetToken = asyncHandler(async (req, res) => {
     resetPasswordExpire: { $gt: new Date() },
   }).select('+resetPasswordToken +resetPasswordExpire');
 
-  if (!user) throw badRequest('Reset link invalid ya expire ho gaya. Dobara request karo.');
-  return ok(res, { email: user.email, name: user.name }, 'Link valid hai');
+  if (!user) throw badRequest('This reset link is invalid or has expired. Please request a new one.');
+  return ok(res, { email: user.email, name: user.name }, 'Link is valid');
 });
 
 // ------------------------------------------------------------------
@@ -134,7 +134,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
     resetPasswordExpire: { $gt: new Date() },
   }).select('+password +resetPasswordToken +resetPasswordExpire');
 
-  if (!user) throw badRequest('Reset link invalid ya expire ho gaya. Dobara request karo.');
+  if (!user) throw badRequest('This reset link is invalid or has expired. Please request a new one.');
 
   user.password = req.body.password;
   user.resetPasswordToken = undefined;
@@ -143,7 +143,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   await user.save();
 
   setAuthCookie(res, user._id);
-  return ok(res, { user: user.publicProfile(), token: signToken(user._id) }, 'Password reset ho gaya, ab login ho jaoge 🔐');
+  return ok(res, { user: user.publicProfile(), token: signToken(user._id) }, 'Password reset successfully - you are now signed in');
 });
 
 // ------------------------------------------------------------------
@@ -155,14 +155,14 @@ export const changePassword = asyncHandler(async (req, res) => {
 
   if (user.password) {
     const okPass = await user.comparePassword(currentPassword);
-    if (!okPass) throw badRequest('Current password galat hai');
+    if (!okPass) throw badRequest('Current password is incorrect');
   }
 
   user.password = newPassword;
   if (user.provider === 'google') user.provider = 'local';
   await user.save();
 
-  return ok(res, {}, 'Password update ho gaya');
+  return ok(res, {}, 'Password updated successfully');
 });
 
 // ------------------------------------------------------------------
@@ -179,11 +179,11 @@ export const updateProfile = asyncHandler(async (req, res) => {
   }
   await user.save();
 
-  return ok(res, { user: user.publicProfile() }, 'Profile update ho gaya');
+  return ok(res, { user: user.publicProfile() }, 'Profile updated successfully');
 });
 
 // ------------------------------------------------------------------
-// DELETE /api/auth/account  (sab kuch delete)
+// DELETE /api/auth/account  (delete the account and all its data)
 // ------------------------------------------------------------------
 export const deleteAccount = asyncHandler(async (req, res) => {
   const user = await User.findById(req.userId);
@@ -198,11 +198,11 @@ export const deleteAccount = asyncHandler(async (req, res) => {
   ]);
 
   res.clearCookie('nh_token', { ...cookieOptions(), maxAge: undefined });
-  return ok(res, {}, 'Account aur saara data delete ho gaya');
+  return ok(res, {}, 'Account and all associated data deleted');
 });
 
 // ------------------------------------------------------------------
-// Google OAuth callback (passport isse call karta hai)
+// Google OAuth callback (called by passport)
 // ------------------------------------------------------------------
 export const googleCallback = asyncHandler(async (req, res) => {
   const user = req.user;
@@ -210,14 +210,14 @@ export const googleCallback = asyncHandler(async (req, res) => {
     return res.redirect(`${env.clientUrl}/login?error=google_failed`);
   }
 
-  // naye user ke liye starter folders
+  // create starter folders for the new user
   const folderCount = await Folder.countDocuments({ user: user._id });
   if (folderCount === 0) await createStarterFolders(user._id);
 
   const token = signToken(user._id);
   res.cookie('nh_token', token, cookieOptions());
 
-  // SPA ko token bhi de dete hain taaki cross-domain (Vercel + Render) par bhi kaam kare
+  // also return the token so the SPA keeps working cross-domain (Vercel + Render)
   return res.redirect(`${env.clientUrl}/auth/callback?token=${token}`);
 });
 

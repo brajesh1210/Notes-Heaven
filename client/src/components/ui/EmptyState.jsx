@@ -1,6 +1,6 @@
 import { cn } from '../../lib/utils.js';
 
-/** Khaali state - koi note/result na mile to */
+/** Empty state - shown when no notes or results are found */
 const EmptyState = ({ icon: Icon, title, description, action, className, compact = false }) => (
   <div className={cn('flex flex-col items-center justify-center text-center', compact ? 'py-10' : 'py-16', className)}>
     {Icon && (

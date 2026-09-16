@@ -5,8 +5,8 @@ import User from '../models/User.js';
 import logger from '../utils/logger.js';
 
 /**
- * Google OAuth strategy. Env me CLIENT_ID/SECRET na ho to silently skip
- * ho jata hai (app crash nahi karta, sirf Google button hide ho jata hai).
+ * Google OAuth strategy. Silently skipped when CLIENT_ID/SECRET are missing
+ * the strategy is skipped (the app does not crash, the Google button is simply hidden).
  */
 export const configurePassport = () => {
   passport.serializeUser((user, done) => done(null, user.id));
@@ -35,7 +35,7 @@ export const configurePassport = () => {
       async (_accessToken, _refreshToken, profile, done) => {
         try {
           const email = profile.emails?.[0]?.value?.toLowerCase();
-          if (!email) return done(new Error('Google account me email nahi mila'), null);
+          if (!email) return done(new Error('No email found on the Google account'), null);
 
           let user = await User.findOne({ email }).select('+googleId');
 

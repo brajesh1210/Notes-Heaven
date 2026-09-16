@@ -21,7 +21,7 @@ const SaveStatus = ({ status, lastSavedAt }) => {
     pending: { icon: Loader2, text: 'Saving...', cls: 'text-brand-700', spin: true },
     saving: { icon: Loader2, text: 'Saving...', cls: 'text-brand-700', spin: true },
     saved: { icon: Check, text: lastSavedAt ? `Saved ${timeAgo(lastSavedAt)}` : 'Saved', cls: 'text-emerald-600' },
-    error: { icon: AlertCircle, text: 'Save fail hua - retry', cls: 'text-red-600' },
+    error: { icon: AlertCircle, text: 'Save failed - retrying', cls: 'text-red-600' },
   };
   const s = map[status] || map.idle;
   return (
@@ -85,7 +85,7 @@ const NoteEditorPage = () => {
     return title !== note.title || JSON.stringify(content) !== JSON.stringify(note.content);
   }, [note, title, content]);
 
-  /** editor + title change hone par autosave schedule */
+  /** schedule autosave when the editor or title changes */
   const onEditorChange = ({ json, html }) => {
     setContent(json);
     setContentHtml(html);
@@ -97,12 +97,12 @@ const NoteEditorPage = () => {
     scheduleSave();
   };
 
-  /** folder / tags change turant save karte hain */
+  /** folder / tag changes are saved immediately */
   const changeFolder = async (folderId) => {
     setFolder(folderId);
     try {
       await api.put(`/notes/${id}`, { folder: folderId || null });
-      toast.success(folderId ? 'Folder update ho gaya' : 'Note uncategorized kar diya');
+      toast.success(folderId ? 'Folder updated' : 'Note moved to Uncategorized');
       setNote((n) => ({ ...n, folder: folderId ? { id: folderId, name: byId.get(folderId)?.name } : null }));
     } catch (e) {
       toast.error(e.message);
@@ -128,7 +128,7 @@ const NoteEditorPage = () => {
         createVersion: true,
       });
       setNote(data.note);
-      toast.success('Note save ho gaya ✅');
+      toast.success('Note saved');
     } catch (e) {
       toast.error(e.message);
     }
@@ -137,21 +137,21 @@ const NoteEditorPage = () => {
   const restore = async () => {
     try {
       await api.patch(`/notes/${id}/restore`);
-      toast.success('Note restore ho gaya 🎉');
+      toast.success('Note restored');
       load();
     } catch (e) {
       toast.error(e.message);
     }
   };
 
-  if (loading) return <PageLoader label="Note load ho raha hai..." />;
+  if (loading) return <PageLoader label="Loading note..." />;
 
   if (!note) {
     return (
       <EmptyState
         icon={FolderOpen}
-        title="Note nahi mila"
-        description="Shayad ye delete ho gaya hai."
+        title="Note not found"
+        description="It may have been deleted."
         action={
           <Button variant="outline" onClick={() => navigate('/notes')}>
             All notes
@@ -168,8 +168,8 @@ const NoteEditorPage = () => {
         <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
           <AlertCircle size={16} className="text-amber-600" />
           <p className="flex-1 text-[13px] text-amber-900">
-            Ye note trash me hai{note.daysLeft !== null ? ` - ${note.daysLeft} din me permanently delete ho jayega` : ''}. Edit karne ke
-            liye pehle restore karo.
+            This note is in trash{note.daysLeft !== null ? ` - it will be permanently deleted in ${note.daysLeft} days` : ''}. Restore it
+            first to make changes.
           </p>
           <Button size="sm" variant="outline" icon={RotateCcw} onClick={restore}>
             Restore
@@ -260,7 +260,7 @@ const NoteEditorPage = () => {
 
         <div className="ml-auto flex items-center gap-2">
           <span className="hidden text-[12px] text-ink-soft sm:inline">
-            <span className="kbd">Ctrl</span> + <span className="kbd">S</span> se save
+            <span className="kbd">Ctrl</span> + <span className="kbd">S</span> to save
           </span>
           <Button variant="outline" icon={Trash2} onClick={() => navigate('/notes')} className="hidden sm:inline-flex">
             All notes

@@ -59,7 +59,7 @@ export const listFolders = asyncHandler(async (req, res) => {
 // GET /api/folders/:id
 export const getFolder = asyncHandler(async (req, res) => {
   const folder = await Folder.findOne({ _id: req.params.id, user: req.userId });
-  if (!folder) throw notFound('Folder nahi mila');
+  if (!folder) throw notFound('Folder not found');
 
   const counts = await noteCounts(req.userId);
   return ok(res, { folder: serialize(folder, counts) }, 'Folder loaded');
@@ -68,17 +68,17 @@ export const getFolder = asyncHandler(async (req, res) => {
 // POST /api/folders
 export const createFolder = asyncHandler(async (req, res) => {
   const { name, parent = null, color = '#1D4ED8' } = req.body;
-  if (!name || !String(name).trim()) throw badRequest('Folder name required hai');
+  if (!name || !String(name).trim()) throw badRequest('Folder name is required');
 
   let parentDoc = null;
   if (parent) {
     parentDoc = await Folder.findOne({ _id: parent, user: req.userId });
-    if (!parentDoc) throw badRequest('Parent folder mila nahi');
-    if (parentDoc.depth >= 9) throw badRequest('Itne deep nested folder support nahi hai');
+    if (!parentDoc) throw badRequest('Parent folder not found');
+    if (parentDoc.depth >= 9) throw badRequest('Nesting this deep is not supported (max 10 levels)');
   }
 
   const exists = await Folder.findOne({ user: req.userId, parent: parentDoc?._id || null, name: String(name).trim() });
-  if (exists) throw badRequest('Is naam ka folder yahan already hai');
+  if (exists) throw badRequest('A folder with this name already exists here');
 
   const folder = await Folder.create({
     user: req.userId,
@@ -90,25 +90,25 @@ export const createFolder = asyncHandler(async (req, res) => {
     color,
   });
 
-  return created(res, { folder: serialize(folder, new Map()) }, 'Folder ban gaya');
+  return created(res, { folder: serialize(folder, new Map()) }, 'Folder created');
 });
 
 // PUT /api/folders/:id  (rename / color / move)
 export const updateFolder = asyncHandler(async (req, res) => {
   const folder = await Folder.findOne({ _id: req.params.id, user: req.userId });
-  if (!folder) throw notFound('Folder nahi mila');
+  if (!folder) throw notFound('Folder not found');
 
   const { name, color, isFavorite, parent } = req.body;
 
-  // parent change (move) - path/ancestors rebuild karna padta hai
+  // parent change (move) - path/ancestors of the subtree must be rebuilt
   if (parent !== undefined && String(parent || '') !== String(folder.parent || '')) {
     let parentDoc = null;
     if (parent) {
       parentDoc = await Folder.findOne({ _id: parent, user: req.userId });
-      if (!parentDoc) throw badRequest('Target parent folder mila nahi');
-      if (String(parentDoc._id) === String(folder._id)) throw badRequest('Folder ko khud ke andar move nahi kar sakte');
+      if (!parentDoc) throw badRequest('Target parent folder not found');
+      if (String(parentDoc._id) === String(folder._id)) throw badRequest('A folder cannot be moved into itself');
       if (parentDoc.ancestors.map(String).includes(String(folder._id))) {
-        throw badRequest('Folder ko uske hi child me move nahi kar sakte');
+        throw badRequest('A folder cannot be moved into one of its own subfolders');
       }
     }
 
@@ -118,7 +118,7 @@ export const updateFolder = asyncHandler(async (req, res) => {
     folder.depth = parentDoc ? parentDoc.depth + 1 : 0;
     folder.path = parentDoc ? `${parentDoc.path}/${folder.name}` : folder.name;
 
-    // saare descendants ka path/depth update
+    // update path/depth for all descendants
     const all = await Folder.find({ user: req.userId });
     const kids = descendantIds(all, folder._id);
     for (const kidId of kids) {
@@ -136,17 +136,17 @@ export const updateFolder = asyncHandler(async (req, res) => {
 
   await folder.save();
   const counts = await noteCounts(req.userId);
-  return ok(res, { folder: serialize(folder, counts) }, 'Folder update ho gaya');
+  return ok(res, { folder: serialize(folder, counts) }, 'Folder updated successfully');
 });
 
 // DELETE /api/folders/:id?mode=move|trash&target=<folderId>
 export const deleteFolder = asyncHandler(async (req, res) => {
   const folder = await Folder.findOne({ _id: req.params.id, user: req.userId });
-  if (!folder) throw notFound('Folder nahi mila');
+  if (!folder) throw notFound('Folder not found');
 
   const all = await Folder.find({ user: req.userId });
   const childIds = descendantIds(all, folder._id);
-  const mode = req.query.mode || 'trash'; // 'trash' (default) ya 'move'
+  const mode = req.query.mode || 'trash'; // 'trash' (default) or 'move'
 
   let moved = 0;
   let trashed = 0;
@@ -176,14 +176,14 @@ export const deleteFolder = asyncHandler(async (req, res) => {
   return ok(
     res,
     { deletedFolders: childIds.length + 1, movedNotes: moved, trashedNotes: trashed },
-    mode === 'move' ? 'Folder delete hua, notes move kar diye' : 'Folder delete hua, notes trash me chale gaye'
+    mode === 'move' ? 'Folder deleted, notes moved' : 'Folder deleted, notes moved to trash'
   );
 });
 
 // PATCH /api/folders/:id/favorite
 export const toggleFolderFavorite = asyncHandler(async (req, res) => {
   const folder = await Folder.findOne({ _id: req.params.id, user: req.userId });
-  if (!folder) throw notFound('Folder nahi mila');
+  if (!folder) throw notFound('Folder not found');
   folder.isFavorite = req.body?.value === undefined ? !folder.isFavorite : Boolean(req.body.value);
   await folder.save();
   return ok(res, { id: folder._id, isFavorite: folder.isFavorite }, 'Updated');

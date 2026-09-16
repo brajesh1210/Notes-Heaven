@@ -7,7 +7,7 @@ import { cn, timeAgo } from '../../lib/utils.js';
 
 const TYPE_ICON = { note: FileText, folder: Folder, tag: Tag };
 
-/** Topbar search - instant suggestions + Enter par Search Results page */
+/** Topbar search - instant suggestions, Enter opens the Search Results page */
 const SearchBar = ({ className, autoFocus = false, initialValue = '', onNavigate }) => {
   const [value, setValue] = useState(initialValue);
   const [open, setOpen] = useState(false);
@@ -105,7 +105,7 @@ const SearchBar = ({ className, autoFocus = false, initialValue = '', onNavigate
               <Loader2 size={15} className="animate-spin" /> Searching...
             </div>
           ) : suggestions.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-ink-muted">"{value}" ke liye kuch nahi mila.</p>
+            <p className="px-4 py-3 text-sm text-ink-muted">No matches for "{value}".</p>
           ) : (
             <>
               {suggestions.map((s) => {

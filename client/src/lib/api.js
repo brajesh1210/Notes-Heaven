@@ -3,8 +3,8 @@ import { demoApi } from './demoApi.js';
 
 /**
  * Ek hi API client.
- *  - DEMO_MODE=true  -> demoApi (in-memory) use hota hai, backend ki zarurat nahi
- *  - warna            -> axios -> Vite proxy (/api) ya VITE_API_URL (production)
+ *  - DEMO_MODE=true  -> uses demoApi (in-memory), no backend required
+ *  - otherwise        -> axios -> Vite proxy (/api) or VITE_API_URL (production)
  */
 
 const RAW_URL = import.meta.env.VITE_API_URL || '';
@@ -23,12 +23,12 @@ export class ApiClientError extends Error {
 
 export const http = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // httpOnly cookie ke liye
+  withCredentials: true, // sends the httpOnly cookie
   headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
 });
 
-// request: har call me Bearer token bhi bhej dete hain (cross-domain backup)
+// every request also sends the Bearer token (cross-domain backup)
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem('nh_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -42,16 +42,16 @@ http.interceptors.response.use(
     if (!error.response) {
       const msg =
         error.code === 'ECONNABORTED'
-          ? 'Request timeout ho gaya - backend chal raha hai?'
-          : 'Backend se connect nahi ho pa raha. Check karo: backend `npm run dev` chal raha hai? VITE_API_URL sahi hai?';
+          ? 'The request timed out - is the backend running?'
+          : 'Cannot reach the backend. Make sure it is running (npm run dev) and VITE_API_URL is correct.';
       return Promise.reject(new ApiClientError(msg, 0));
     }
     const { status, data } = error.response;
-    return Promise.reject(new ApiClientError(data?.message || 'Kuch galat ho gaya', status, data?.errors || []));
+    return Promise.reject(new ApiClientError(data?.message || 'Something went wrong', status, data?.errors || []));
   }
 );
 
-/** internal: demo ya axios dono par same signature */
+/** internal: same signature for demo and axios */
 const request = async (method, url, { params, data } = {}) => {
   if (DEMO_MODE) {
     return demoApi(method, url, { params, data });

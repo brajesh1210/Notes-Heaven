@@ -14,9 +14,9 @@ router.post(
   '/register',
   authLimiter,
   validate(
-    body('name').required('Naam daalo'),
-    body('email').required('Email daalo').isEmail(),
-    body('password').required('Password daalo').min(6)
+    body('name').required('Name is required'),
+    body('email').required('Email is required').isEmail(),
+    body('password').required('Password is required').min(6)
   ),
   auth.register
 );
@@ -24,7 +24,7 @@ router.post(
 router.post(
   '/login',
   authLimiter,
-  validate(body('email').required('Email daalo').isEmail(), body('password').required('Password daalo')),
+  validate(body('email').required('Email is required').isEmail(), body('password').required('Password is required')),
   auth.login
 );
 
@@ -35,17 +35,17 @@ router.put('/profile', protect, auth.updateProfile);
 router.put(
   '/change-password',
   protect,
-  validate(body('newPassword').required('Naya password daalo').min(6)),
+  validate(body('newPassword').required('New password is required').min(6)),
   auth.changePassword
 );
 router.delete('/account', protect, auth.deleteAccount);
 
 // ---- Forgot password flow ----
-router.post('/forgot-password', mailLimiter, validate(body('email').required('Email daalo').isEmail()), auth.forgotPassword);
+router.post('/forgot-password', mailLimiter, validate(body('email').required('Email is required').isEmail()), auth.forgotPassword);
 router.get('/verify-reset-token/:token', auth.verifyResetToken);
-router.put('/reset-password/:token', validate(body('password').required('Naya password daalo').min(6)), auth.resetPassword);
+router.put('/reset-password/:token', validate(body('password').required('New password is required').min(6)), auth.resetPassword);
 
-// ---- Google OAuth (sirf tab mount karte hain jab creds ho) ----
+// ---- Google OAuth (mounted only when credentials are present) ----
 if (features.googleOAuth) {
   router.get('/google', passport.authenticate('google', { session: false, scope: ['profile', 'email'], prompt: 'select_account' }));
   router.get(
@@ -57,7 +57,7 @@ if (features.googleOAuth) {
   router.get('/google', (_req, res) =>
     res.status(503).json({
       success: false,
-      message: 'Google login abhi configured nahi hai (GOOGLE_CLIENT_ID / SECRET missing).',
+      message: 'Google sign-in is not configured yet (GOOGLE_CLIENT_ID / SECRET missing).',
     })
   );
 }

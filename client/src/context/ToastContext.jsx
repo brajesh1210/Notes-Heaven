@@ -6,7 +6,7 @@ const ToastContext = createContext(null);
 
 export const useToast = () => {
   const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast ko <ToastProvider> ke andar use karo');
+  if (!ctx) throw new Error('useToast must be used within <ToastProvider>');
   return ctx;
 };
 
@@ -58,7 +58,7 @@ export const ToastProvider = ({ children }) => {
     <ToastContext.Provider value={value}>
       {children}
 
-      {/* toasts - mobile par top, desktop par bottom-right */}
+      {/* toasts - top on mobile, bottom-right on desktop */}
       <div className="pointer-events-none fixed inset-x-0 top-3 z-[100] flex flex-col items-center gap-2 px-3 sm:inset-x-auto sm:right-5 sm:top-auto sm:bottom-5 sm:items-end">
         {toasts.map((t) => {
           const Icon = ICONS[t.type] || Info;

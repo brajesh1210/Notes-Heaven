@@ -37,7 +37,7 @@ const UserMenu = () => {
       <MenuDivider />
       <MenuLabel>Account</MenuLabel>
 
-      <MenuItem icon={User} onClick={() => toast.info('Profile page Phase 3 me aa raha hai')}>
+      <MenuItem icon={User} onClick={() => toast.info('Profile settings are coming soon')}>
         Profile
       </MenuItem>
       <MenuItem icon={Settings} onClick={() => navigate('/dashboard')}>
@@ -46,7 +46,7 @@ const UserMenu = () => {
       <MenuItem
         icon={BookOpen}
         onClick={() => {
-          toast.info('Notes Heaven v1.0 - MERN stack se bana 📖');
+          toast.info('Notes Heaven v1.0');
         }}
       >
         About

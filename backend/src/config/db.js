@@ -6,7 +6,7 @@ mongoose.set('strictQuery', true);
 
 export const connectDB = async () => {
   if (!env.mongoUri) {
-    logger.error('MONGO_URI missing! backend/.env file me apna MongoDB Atlas connection string daalo.');
+    logger.error('MONGO_URI is missing. Add your MongoDB Atlas connection string to backend/.env.');
     process.exit(1);
   }
 
@@ -18,7 +18,7 @@ export const connectDB = async () => {
     return conn;
   } catch (err) {
     logger.error(`MongoDB connection failed: ${err.message}`);
-    logger.info('Check karo: Atlas me Network Access -> 0.0.0.0/0 allow hai? DB user ka password sahi hai?');
+    logger.info('Check that Atlas Network Access allows your IP (or 0.0.0.0/0) and that the DB user password is correct.');
     process.exit(1);
   }
 };

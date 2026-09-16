@@ -7,7 +7,7 @@ export const signToken = (userId) =>
 
 export const verifyToken = (token) => jwt.verify(token, env.jwtSecret);
 
-/** Random raw reset token + uska sha256 hash (DB me sirf hash jata hai) */
+/** Random raw reset token + its sha256 hash (only the hash is stored in the DB) */
 export const createResetToken = () => {
   const raw = crypto.randomBytes(32).toString('hex');
   const hashed = crypto.createHash('sha256').update(raw).digest('hex');
@@ -18,7 +18,7 @@ export const hashToken = (raw) => crypto.createHash('sha256').update(raw).digest
 
 export const COOKIE_NAME = 'nh_token';
 
-/** httpOnly cookie options - XSS se token safe rehta hai */
+/** httpOnly cookie options - keeps the token safe from XSS */
 export const cookieOptions = () => ({
   httpOnly: true,
   secure: features.isProd,

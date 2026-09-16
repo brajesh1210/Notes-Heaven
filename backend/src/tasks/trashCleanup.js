@@ -6,9 +6,9 @@ import logger from '../utils/logger.js';
 /**
  * Trash cleanup.
  *
- * Note schema me `scheduledFor` par MongoDB TTL index laga hai, matlab DB
- * khud notes delete kar deta hai. Ye job frontend ko accurate `daysLeft` dene aur
- * double-safety ke liye hai (TTL thread 60 sec me chalta hai).
+ * The Note schema has a MongoDB TTL index on `scheduledFor`, so the DB
+ * deletes expired notes by itself. This job exists to give the frontend accurate
+ * `daysLeft` values and as double-safety (the TTL thread runs every 60s).
  */
 export const purgeExpiredNotes = async () => {
   try {
@@ -27,7 +27,7 @@ export const startTrashCleanupJob = (everyMinutes = 60) => {
   purgeExpiredNotes();
   timer = setInterval(purgeExpiredNotes, everyMinutes * 60 * 1000);
   timer.unref?.();
-  logger.info(`Trash cleanup job started (har ${everyMinutes} min, retention = 5 din by default)`);
+  logger.info(`Trash cleanup job started (every ${everyMinutes} min, retention = 5 days by default)`);
   return timer;
 };
 

@@ -107,8 +107,8 @@ const Folders = () => {
       ) : tree.length === 0 ? (
         <EmptyState
           icon={FolderOpen}
-          title="Koi folder nahi hai"
-          description="Folders se notes organized rehte hain. Class 12, Physics, Personal - jaise chaho banao, nested bhi."
+          title="No folders yet"
+          description="Folders keep your notes organized. Create as many as you need - nesting supported."
           action={
             <Button icon={Plus} onClick={() => openCreate(null)}>
               Create first folder
@@ -138,8 +138,8 @@ const Folders = () => {
           <div className="mt-6 flex items-start gap-3 rounded-2xl border border-line bg-white p-4">
             <FileText size={16} className="mt-0.5 shrink-0 text-brand-700" />
             <p className="text-[13px] leading-relaxed text-ink-muted">
-              <span className="font-semibold text-ink">Tip:</span> folder ke andar jaake "New subfolder" se nesting banao (jaise
-              Class 12 → Physics → Optics). Folder delete karne par uske notes trash me chale jate hain - 5 din tak recover kar sakte ho.
+              <span className="font-semibold text-ink">Tip:</span> open a folder and use "New subfolder" to nest deeper (e.g.
+              Class 12 → Physics → Optics). Deleting a folder moves its notes to trash - recoverable for 5 days.
             </p>
           </div>
         </>
@@ -153,8 +153,8 @@ const Folders = () => {
         onClose={() => setConfirmDelete(null)}
         onConfirm={handleDelete}
         loading={busy}
-        title={`"${confirmDelete?.name}" delete karna hai?`}
-        description="Folder ke saare notes trash me chale jayenge (5 din me auto-delete). Subfolders bhi delete ho jayenge."
+        title={`Delete "${confirmDelete?.name}"?`}
+        description="All notes in this folder will move to trash (auto-deleted after 5 days). Subfolders are deleted too."
         confirmLabel="Delete folder"
       />
     </div>

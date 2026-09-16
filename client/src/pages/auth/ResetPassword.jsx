@@ -36,9 +36,9 @@ const ResetPassword = () => {
   const submit = async (e) => {
     e.preventDefault();
     const errs = {};
-    if (!form.password) errs.password = 'Naya password daalo';
-    else if (form.password.length < 6) errs.password = 'Kam se kam 6 characters';
-    if (form.password !== form.confirm) errs.confirm = 'Dono passwords match nahi kar rahe';
+    if (!form.password) errs.password = 'New password is required';
+    else if (form.password.length < 6) errs.password = 'At least 6 characters';
+    if (form.password !== form.confirm) errs.confirm = 'Passwords do not match';
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
@@ -47,7 +47,7 @@ const ResetPassword = () => {
       const { data, message } = await api.put(`/auth/reset-password/${token}`, { password: form.password });
       if (data.token) localStorage.setItem('nh_token', data.token);
       await refresh();
-      toast.success(message || 'Password reset ho gaya');
+      toast.success(message || 'Password reset successfully');
       navigate('/dashboard', { replace: true });
     } catch (err) {
       toast.error(err.message);
@@ -59,7 +59,7 @@ const ResetPassword = () => {
   if (checking) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-canvas">
-        <PageLoader label="Reset link verify kar rahe hain..." />
+        <PageLoader label="Verifying reset link..." />
       </div>
     );
   }
@@ -68,7 +68,7 @@ const ResetPassword = () => {
     return (
       <AuthLayout
         title="Link expired"
-        subtitle="Ye reset link invalid ya expire ho gaya hai."
+        subtitle="This reset link is invalid or has expired."
         footer={
           <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-700 hover:underline">
             <ArrowLeft size={14} /> Back to login
@@ -79,7 +79,7 @@ const ResetPassword = () => {
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600">
             <KeyRound size={24} />
           </span>
-          <p className="text-sm leading-relaxed text-ink-muted">Reset links sirf 30 minute ke liye valid hote hain. Naya link request karo.</p>
+          <p className="text-sm leading-relaxed text-ink-muted">Reset links are only valid for 30 minutes. Please request a new one.</p>
           <Button className="w-full" onClick={() => navigate('/forgot-password')}>
             Naya reset link bhejo
           </Button>
@@ -91,7 +91,7 @@ const ResetPassword = () => {
   return (
     <AuthLayout
       title="Set new password"
-      subtitle={email ? `Password reset kar rahe hain: ${email}` : 'Naya password daalo.'}
+      subtitle={email ? `Resetting password for: ${email}` : 'Set a new password.'}
       footer={
         <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-700 hover:underline">
           <ArrowLeft size={14} /> Back to login
@@ -107,12 +107,12 @@ const ResetPassword = () => {
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
           error={errors.password}
-          hint="6+ characters, ek uppercase aur number rakho to aur strong hoga"
+          hint="Use 6+ characters with an uppercase letter and a number for a stronger password"
         />
         <PasswordInput
           label="Confirm Password"
           name="confirm"
-          placeholder="Dobara wahi password"
+          placeholder="Repeat the same password"
           value={form.confirm}
           onChange={(e) => setForm({ ...form, confirm: e.target.value })}
           error={errors.confirm}

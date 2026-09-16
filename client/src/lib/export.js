@@ -20,7 +20,7 @@ const STYLES = `
 export const escapeHtml = (s = '') =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/** HTML -> hidden iframe -> browser print dialog (user "Save as PDF" karega). Koi extra library nahi. */
+/** HTML -> hidden iframe -> browser print dialog (the user picks "Save as PDF"). No extra libraries. */
 export const printHtml = (html, title = 'Note') => {
   const iframe = document.createElement('iframe');
   iframe.style.position = 'fixed';
@@ -47,12 +47,12 @@ export const printHtml = (html, title = 'Note') => {
     }
   };
 
-  // images (Cloudinary) load hone ka wait
+  // wait for images to finish loading
   if (iframe.contentWindow.document.readyState === 'complete') setTimeout(run, 350);
   else iframe.onload = () => setTimeout(run, 350);
 };
 
-/** Note ko print-friendly HTML wrapper me daal ke export */
+/** Wrap the note in print-friendly HTML and export it */
 export const exportNoteAsPdf = (note) => {
   const tags = (note.tags || []).map((t) => `<span class="badge">#${escapeHtml(t.name)}</span>`).join('');
   const meta = [
@@ -73,7 +73,7 @@ export const exportNoteAsPdf = (note) => {
   printHtml(html, slugify(note.title));
 };
 
-/** Saare notes ek hi PDF me (print dialog) */
+/** All notes in a single PDF (print dialog) */
 export const exportNotesAsPdf = (notes = []) => {
   const body = notes
     .map(

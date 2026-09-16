@@ -52,7 +52,7 @@ export const env = {
   trashRetentionDays: Number(process.env.TRASH_RETENTION_DAYS || 5),
 };
 
-// Kaunse integrations configured hain (features gracefully degrade karein)
+// Which optional integrations are configured (features degrade gracefully when missing)
 export const features = {
   get googleOAuth() {
     return Boolean(env.google.clientId && env.google.clientSecret);

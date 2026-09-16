@@ -42,14 +42,14 @@ const ToolButton = ({ icon: Icon, label, onClick, active = false, disabled = fal
 
 const Sep = () => <span className="mx-1 h-5 w-px shrink-0 bg-line" />;
 
-/** TipTap editor ka formatting toolbar (design jaisa) */
+/** TipTap editor formatting toolbar (matches the design) */
 const EditorToolbar = ({ editor, onPickImage, uploading = false, className }) => {
   const fileRef = useRef(null);
   if (!editor) return null;
 
   const setLink = () => {
     const previous = editor.getAttributes('link').href || '';
-    const url = window.prompt('Link URL daalo:', previous);
+    const url = window.prompt('Enter link URL:', previous);
     if (url === null) return;
     if (url === '') return editor.chain().focus().extendMarkRange('link').unsetLink().run();
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();

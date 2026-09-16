@@ -40,7 +40,7 @@ const Topbar = () => {
               New Note
             </Button>
 
-            <IconButton icon={Bell} label="Notifications" onClick={() => toast.info('Notifications Phase 3 me aayenge 🔔')} />
+            <IconButton icon={Bell} label="Notifications" onClick={() => toast.info('Notifications are coming soon')} />
             <UserMenu />
           </div>
         </div>

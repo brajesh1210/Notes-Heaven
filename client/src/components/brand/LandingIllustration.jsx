@@ -1,7 +1,7 @@
 /**
  * Landing hero illustration - 3 stacked books + pen cup + plant.
- * Hand-drawn SVG (design ke hero image jaisa) - koi external image nahi,
- * isliye offline bhi aur preview me bhi perfectly render hota hai.
+ * Hand-drawn SVG matching the design's hero image - no external assets,
+ * so it renders perfectly offline and in previews.
  */
 const LandingIllustration = ({ className }) => (
   <svg viewBox="0 0 420 340" className={className} role="img" aria-label="Stacked books with pens and a plant">

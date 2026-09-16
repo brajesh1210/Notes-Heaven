@@ -37,14 +37,14 @@ const NoteView = () => {
     load();
   }, [load]);
 
-  if (loading) return <PageLoader label="Note khul raha hai..." />;
+  if (loading) return <PageLoader label="Opening note..." />;
 
   if (!note) {
     return (
       <EmptyState
         icon={FileText}
-        title="Note nahi mila"
-        description="Ye note delete ho gaya hoga ya link galat hai."
+        title="Note not found"
+        description="This note may have been deleted, or the link is incorrect."
         action={
           <Button variant="outline" onClick={() => navigate('/notes')}>
             All notes
@@ -90,7 +90,7 @@ const NoteView = () => {
 
       {note.isTrashed && (
         <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-900">
-          Ye note trash me hai - {note.daysLeft ?? 0} din me permanently delete ho jayega. "..." menu se restore kar sakte ho.
+          This note is in trash - it will be permanently deleted in {note.daysLeft ?? 0} days. Restore it from the "..." menu.
         </div>
       )}
 
@@ -99,7 +99,7 @@ const NoteView = () => {
 
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 px-2 text-[12.5px] text-ink-muted">
         <span className="inline-flex items-center gap-1.5">
-          <Clock size={13} /> {timeAgo(note.lastEditedAt)} ({friendlyDate(note.createdAt)} ko banaya)
+          <Clock size={13} /> {timeAgo(note.lastEditedAt)} (created {friendlyDate(note.createdAt)})
         </span>
         <span className="inline-flex items-center gap-1.5">
           <FileText size={13} /> {note.wordCount} words · {note.readingTime} min read
@@ -127,7 +127,7 @@ const NoteView = () => {
         {note.content ? (
           <NoteEditor content={note.content} editable={false} />
         ) : (
-          <p className="text-sm text-ink-soft">Is note me abhi content nahi hai.</p>
+          <p className="text-sm text-ink-soft">This note has no content yet.</p>
         )}
       </div>
 

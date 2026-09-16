@@ -3,7 +3,7 @@ import { X, Plus, Check } from 'lucide-react';
 import { api } from '../../lib/api.js';
 import { cn } from '../../lib/utils.js';
 
-/** Tags add/remove - note editor aur create page me */
+/** Tags add/remove - used in the note editor and the create page */
 const TagInput = ({ value = [], onChange, allTags = [], onTagsLoaded, max = 12 }) => {
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -54,7 +54,7 @@ const TagInput = ({ value = [], onChange, allTags = [], onTagsLoaded, max = 12 }
             }
             if (e.key === 'Backspace' && !input && value.length) remove(value[value.length - 1]);
           }}
-          placeholder={value.length ? '' : 'Add tag aur Enter dabao...'}
+          placeholder={value.length ? '' : 'Type a tag and press Enter...'}
           className="min-w-[140px] flex-1 border-none bg-transparent px-1.5 py-1 text-[13px] text-ink placeholder:text-ink-soft focus:outline-none"
         />
 

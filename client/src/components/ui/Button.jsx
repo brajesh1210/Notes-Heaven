@@ -11,7 +11,7 @@ const VARIANTS = {
   'danger-soft': 'btn-danger-soft',
 };
 
-/** Project ka ek hi button - design ke blue primary ke saath */
+/** The single button component used across the project - design's blue primary */
 const Button = forwardRef(
   (
     { as: Tag = 'button', variant = 'primary', size = 'md', loading = false, icon: Icon, iconRight: IconRight, className, children, disabled, ...props },

@@ -70,7 +70,7 @@ export const searchNotes = asyncHandler(async (req, res) => {
     Note.countDocuments(filter),
   ]);
 
-  // title me match karne wale upar
+  // title matches first
   let results = notes;
   if (term) {
     const rx = new RegExp(escapeRegex(term), 'i');

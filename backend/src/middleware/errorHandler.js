@@ -6,14 +6,14 @@ export const notFoundHandler = (req, res, next) => {
   next(new ApiError(404, `Route not found: ${req.method} ${req.originalUrl}`));
 };
 
-/** Mongoose / JWT errors ko readable message me convert karta hai */
+/** Converts Mongoose / JWT errors into readable messages */
 const normalize = (err) => {
   if (err.name === 'CastError') return new ApiError(400, `Invalid ${err.path}: ${err.value}`);
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue || {})[0] || 'field';
     const value = err.keyValue?.[field];
-    if (field === 'email') return new ApiError(409, 'Ye email already registered hai. Login karo ya dusra email use karo.');
-    return new ApiError(409, `"${value}" already exist karta hai (${field})`);
+    if (field === 'email') return new ApiError(409, 'This email is already registered. Please sign in or use a different email.');
+    return new ApiError(409, `"${value}" already exists (${field})`);
   }
   if (err.name === 'ValidationError') {
     const errors = Object.values(err.errors).map((e) => ({ field: e.path, message: e.message }));
@@ -34,7 +34,7 @@ export const errorHandler = (err, req, res, _next) => {
 
   res.status(status).json({
     success: false,
-    message: status >= 500 && features.isProd ? 'Server error, thodi der baad try karo' : error.message,
+    message: status >= 500 && features.isProd ? 'Internal server error, please try again later' : error.message,
     errors: error.errors || [],
     ...(features.isProd ? {} : { stack: error.stack?.split('\n').slice(0, 4) }),
   });

@@ -17,7 +17,7 @@ const start = async () => {
   startTrashCleanupJob(60); // har ghante expired trash purge
 
   const shutdown = async (signal) => {
-    logger.warn(`${signal} received - server band kar rahe hain...`);
+    logger.warn(`${signal} received - shutting down server...`);
     stopTrashCleanupJob();
     server.close(async () => {
       await disconnectDB();

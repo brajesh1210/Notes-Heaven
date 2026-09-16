@@ -1,6 +1,6 @@
 import { cn, initials } from '../../lib/utils.js';
 
-/** User avatar - image nahi to initials */
+/** User avatar - falls back to initials when there is no image */
 const Avatar = ({ user, size = 32, className }) => {
   if (user?.avatar) {
     return <img src={user.avatar} alt={user.name} style={{ width: size, height: size }} className={cn('rounded-full object-cover', className)} />;

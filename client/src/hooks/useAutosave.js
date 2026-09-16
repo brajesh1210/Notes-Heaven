@@ -6,7 +6,7 @@ import { api } from '../lib/api.js';
  *   const { status, lastSavedAt, saveNow, scheduleSave } = useAutosave(noteId, () => ({ title, content, contentHtml }));
  *
  * status: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
- * Note: create page par noteId null hota hai -> local draft (localStorage) me save karte hain.
+ * Note: on the create page noteId is null -> we save a local draft (localStorage).
  */
 export const useAutosave = (noteId, getPayload, { delay = 1500, enabled = true } = {}) => {
   const [status, setStatus] = useState('idle');
@@ -25,7 +25,7 @@ export const useAutosave = (noteId, getPayload, { delay = 1500, enabled = true }
     if (!payload) return;
 
     if (!noteId) {
-      // naya note - backend par nahi, local draft
+      // new note - local draft only, nothing is sent to the backend
       try {
         localStorage.setItem(localKey, JSON.stringify({ ...payload, savedAt: Date.now() }));
         setLastSavedAt(new Date());
@@ -48,7 +48,7 @@ export const useAutosave = (noteId, getPayload, { delay = 1500, enabled = true }
     }
   }, [noteId, enabled, localKey]);
 
-  /** content change hone par call karo - debounce ke saath save */
+  /** call when content changes - saves with debounce */
   const scheduleSave = useCallback(() => {
     if (!enabled) return;
     setStatus('pending');
@@ -64,7 +64,7 @@ export const useAutosave = (noteId, getPayload, { delay = 1500, enabled = true }
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
-  // browser band karne se pehle warning (agar save pending ho)
+  // warn before closing the browser if a save is pending
   useEffect(() => {
     const handler = (e) => {
       if (status === 'pending' || status === 'saving') {

@@ -3,7 +3,7 @@ import { BookOpen } from 'lucide-react';
 import { cn } from '../../lib/utils.js';
 import { APP_NAME } from '../../lib/constants.js';
 
-/** Notes Heaven logo - UI design jaisa open-book mark */
+/** Notes Heaven logo - open-book mark matching the UI design */
 const Logo = ({ to = '/', size = 'md', className, showText = true }) => {
   const sizes = {
     sm: { box: 'h-7 w-7', icon: 15, text: 'text-[15px]' },

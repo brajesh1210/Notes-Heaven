@@ -1,6 +1,6 @@
 import { cn } from '../../lib/utils.js';
 
-/** Dashboard ke top 3 stat cards (Total Notes / Folders / Last Updated) */
+/** The top 3 stat cards on the Dashboard (Total Notes / Folders / Last Updated) */
 const StatCard = ({ icon: Icon, label, value, tone = 'brand', hint }) => {
   const tones = {
     brand: 'bg-brand-50 text-brand-700',

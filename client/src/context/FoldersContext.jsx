@@ -3,14 +3,14 @@ import { api } from '../lib/api.js';
 import { useToast } from './ToastContext.jsx';
 
 /**
- * Folders ko ek jagah se manage karta hai - sidebar, folders page, note editor
- * sab isi se data lete hain. Koi bhi change aane par refresh() call karo.
+ * Central place that manages folders - the sidebar, folders page and note
+ * editor all read from here. Call refresh() after any change.
  */
 const FoldersContext = createContext(null);
 
 export const useFolders = () => {
   const ctx = useContext(FoldersContext);
-  if (!ctx) throw new Error('useFolders ko <FoldersProvider> ke andar use karo');
+  if (!ctx) throw new Error('useFolders must be used within <FoldersProvider>');
   return ctx;
 };
 
@@ -29,8 +29,8 @@ export const FoldersProvider = ({ children }) => {
       setUncategorized(data.uncategorized ?? 0);
       return data;
     } catch (e) {
-      // silent - sidebar khaali rahega, page par error dikhega
-      console.warn('Folders load nahi hue:', e.message);
+      // silent - the sidebar stays empty, the page shows the error
+      console.warn('Failed to load folders:', e.message);
       return null;
     } finally {
       setLoading(false);
@@ -45,7 +45,7 @@ export const FoldersProvider = ({ children }) => {
     async (payload) => {
       const { data, message } = await api.post('/folders', payload);
       await refresh();
-      toast.success(message || 'Folder ban gaya');
+      toast.success(message || 'Folder created');
       return data.folder;
     },
     [refresh, toast]
@@ -55,7 +55,7 @@ export const FoldersProvider = ({ children }) => {
     async (id, payload) => {
       const { data, message } = await api.put(`/folders/${id}`, payload);
       await refresh();
-      toast.success(message || 'Folder update ho gaya');
+      toast.success(message || 'Folder updated');
       return data.folder;
     },
     [refresh, toast]
@@ -65,7 +65,7 @@ export const FoldersProvider = ({ children }) => {
     async (id, mode = 'trash', target = null) => {
       const { data, message } = await api.delete(`/folders/${id}`, { mode, target });
       await refresh();
-      toast.success(message || 'Folder delete ho gaya');
+      toast.success(message || 'Folder deleted');
       return data;
     },
     [refresh, toast]
@@ -73,7 +73,7 @@ export const FoldersProvider = ({ children }) => {
 
   const byId = useMemo(() => new Map(folders.map((f) => [f.id, f])), [folders]);
 
-  /** flat option list (indent ke saath) - select dropdown ke liye */
+  /** flat option list (indented) for select dropdowns */
   const flatOptions = useMemo(() => {
     const out = [];
     const walk = (nodes, level = 0) => {

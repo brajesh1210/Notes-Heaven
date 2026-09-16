@@ -1,82 +1,52 @@
-# Notes Heaven — 5 Phase Roadmap
+# Roadmap
 
-Har phase ke baad: zip file + robocopy command + git push command.
-Har phase me mera part (code) aur tera part (commands + accounts + testing) clearly likha rahega.
+Notes Heaven is delivered in five phases. Each phase ships as a zip with a merge command and a git push, and is fully testable before the next one starts.
 
----
+## Phase 1 — Foundation (done)
 
-## Phase 1 — Foundation ✅ (ye wala zip)
+- MERN monorepo: Express REST API + React/Vite/Tailwind frontend
+- Custom auth (JWT httpOnly cookie): register, login, logout, session restore
+- Forgot-password flow with reset tokens (email when SMTP is configured, dev link otherwise)
+- Notes CRUD with TipTap rich text: headings, lists, task lists, quotes, links, code blocks with syntax highlighting
+- Autosave with visible save status + manual save (Ctrl+S)
+- Nested folders (create / rename / move / delete with move-or-trash choice), breadcrumbs
+- Tags with colors, tag filtering, tag suggestions
+- Search across title / content / tags / folders with live suggestions and advanced filters (date range, folder, favorite, pinned, trash)
+- Pin, favorite, duplicate
+- Trash with 5-day auto-delete, restore, restore-all, permanent delete, empty trash
+- Dashboard stats, note versions (history kept on save), Markdown export, PDF export via print dialog
+- Full UI matching the approved design, mobile responsive (sidebar drawer, adaptive tables/grids)
+- Demo mode (`npm run dev:demo`) with in-memory data for UI-only runs
 
-**Mera part (ho gaya):**
+## Phase 2 — Integrations go live
 
-- Monorepo structure (backend/ + client/), .gitignore, env templates
-- Backend: Express app, MongoDB models (User, Note, Folder, Tag), JWT cookie auth
-  (register/login/logout/me/profile/change-password/delete-account), forgot-password flow
-  (token + mail), notes CRUD + autosave + trash/restore/permanent-delete/duplicate/pin/favorite,
-  folders (nested, move, delete modes), tags, search + suggestions, image upload route (Cloudinary wired),
-  dashboard stats, markdown export, trash auto-cleanup job, rate limiting, error handling, seed script
-- Frontend: design wala pura UI — Landing, Signup, Login, Forgot/Reset password, Dashboard,
-  All Notes (table + filters), Folders + Folder Detail (nested), Create Note, Note Editor (TipTap +
-  autosave + Ctrl+S), Note View, Search Results, Trash, 404, toasts, confirm dialogs, responsive drawer
+- Google OAuth end-to-end (Google Cloud console setup walk-through included)
+- Cloudinary image upload in the editor (drag-drop, paste, resize), image delete on note/image removal
+- Real SMTP forgot-password + welcome emails (Gmail/SES setup guide)
+- Profile page: avatar upload, name/email edit, change password, delete account
 
-**Tera part:** Atlas cluster + .env + npm install + run + GitHub push
-→ Guide: [PHASE-1-SETUP.md](PHASE-1-SETUP.md)
+## Phase 3 — UX polish
 
----
+- Dark mode with system preference + manual toggle
+- Note version history UI (view & restore old versions)
+- Keyboard shortcuts (Ctrl+S save, Ctrl+K search, Esc close dialogs) with a shortcuts help modal
+- Bulk actions: select multiple notes → move, tag, pin, trash
+- Note templates (lecture notes, meeting notes, revision sheet)
+- Sortable columns, list/grid view toggle, recent-notes rail
 
-## Phase 2 — Google OAuth + Images + Export polish ⏳
+## Phase 4 — Deployment
 
-Karne wale kaam:
+- Backend to Render (health check, env vars, auto-deploy from GitHub)
+- Frontend to Vercel (env vars, preview deploys)
+- MongoDB Atlas production hardening (dedicated DB user, restricted IP if possible, backups on)
+- CORS/cookie configuration for production domains, rate limits review
+- Custom domain checklist (optional)
 
-- Google Cloud Console se OAuth client banao (tera part — main exact steps dunga)
-- `.env` me `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL` bharo
-- Cloudinary free account → API keys `.env` me → note editor me image upload live
-- Gmail App Password → forgot-password mail asli inbox me aane lage
-- PDF export ko direct download banane ka option (discussion karenge)
-- Note share (public read-only link) — optional
+## Phase 5 — Hardening & scale
 
-Test: Google button se login, image drag-drop, reset mail inbox me.
-
----
-
-## Phase 3 — UX polish + extra features ⏳
-
-- Profile page (naam, avatar upload, theme toggle, password change UI)
-- Dark mode (design system me tokens already tayyar hain)
-- Version history UI (purana version dekh ke restore karo — API ready hai)
-- Keyboard shortcuts panel (`/` search, `N` new note, Ctrl+S, Ctrl+B/I/U)
-- Bulk actions (multi-select → move folder / trash)
-- Note templates (Chapter notes, DSA question, Meeting notes)
-- Offline draft (naya note internet ke bina bhi likha jaye)
-
----
-
-## Phase 4 — Deployment ⏳
-
-- Backend → Render (env vars, health check `/api/health`, cookie `sameSite=None; secure`)
-- Frontend → Vercel (`VITE_API_URL` set karna)
-- Atlas IP whitelist + DB backup
-- Custom domain (optional) + favicon/OG image polish
-- Post-deploy smoke test checklist
-
----
-
-## Phase 5 — Hardening ⏳
-
-- Automated tests (Jest + supertest) — Phase 1 me maine locally 59 API checks pass karaye the, unhe proper test suite bana dena
-- CI/CD: GitHub Actions (lint + build + test on push)
-- Security: helmet CSP tuning, refresh tokens, audit logs
-- Performance: pagination everywhere, virtualized lists, image CDN transforms, query indexes review
-- Final documentation + portfolio-ready README with screenshots
-
----
-
-## Kaam karne ka tareeka (har phase me wahi)
-
-1. Main phase ka code likh kar zip deta hoon.
-2. Main robocopy command deta hoon jo zip ka content teri existing repo folder me merge kar de.
-3. Tu commands chalata hai, app chalata hai, checklist tick karta hai.
-4. Bugs aayein to mujhe error paste kar — main fix karke next zip deta hoon (ya patch file).
-5. Sab kaam hone par git push command chalti hai.
-
-Isse teri GitHub me phase-wise clean commit history banti jayegi — interview me dikhane layak. 🚀
+- Automated tests: API integration tests (supertest) + frontend component tests (Vitest/Testing Library)
+- CI on GitHub Actions: lint + test + build on every push
+- Security pass: helmet, strict CORS, input sanitization, dependency audit, security headers
+- Performance: pagination everywhere, image lazy-loading, route-level code splitting, DB index review
+- Error tracking + request logging in production (Sentry or similar)
+- Backup & restore runbook for user data

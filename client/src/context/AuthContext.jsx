@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth ko <AuthProvider> ke andar use karo');
+  if (!ctx) throw new Error('useAuth must be used within <AuthProvider>');
   return ctx;
 };
 
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
       const { data, message } = await api.post('/auth/register', { name, email, password });
       storeToken(data.token);
       setUser(data.user);
-      toast.success(message || 'Account ban gaya!');
+      toast.success(message || 'Account created!');
       return data.user;
     },
     [toast]
@@ -68,14 +68,14 @@ export const AuthProvider = ({ children }) => {
     }
     localStorage.removeItem('nh_token');
     setUser(null);
-    toast.info('Logout ho gaya. Phir aana! 👋');
+    toast.info('Logged out successfully. See you soon!');
   }, [toast]);
 
   const updateProfile = useCallback(
     async (payload) => {
       const { data, message } = await api.put('/auth/profile', payload);
       setUser(data.user);
-      toast.success(message || 'Profile update ho gaya');
+      toast.success(message || 'Profile updated');
       return data.user;
     },
     [toast]

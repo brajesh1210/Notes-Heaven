@@ -95,7 +95,7 @@ const SidebarContent = ({ onNavigate }) => {
               ))}
             </div>
           ) : folders.length === 0 ? (
-            <p className="px-3 py-2 text-[13px] text-ink-soft">Koi folder nahi hai.</p>
+            <p className="px-3 py-2 text-[13px] text-ink-soft">No folders yet.</p>
           ) : (
             <>
               {tree.map((node) => (

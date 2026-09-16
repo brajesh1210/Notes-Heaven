@@ -30,7 +30,7 @@ const CreateNote = () => {
 
   const save = async (goToEditor = true) => {
     if (!title.trim()) {
-      setTitleError('Note ko ek title do (e.g. "Business Environment - Chapter 1")');
+      setTitleError('Give your note a title (e.g. "Business Environment - Chapter 1")');
       return;
     }
     setTitleError('');
@@ -43,7 +43,7 @@ const CreateNote = () => {
         tags,
         contentHtml: '',
       });
-      toast.success(message || 'Note create ho gaya 🎉');
+      toast.success(message || 'Note created');
       navigate(goToEditor ? `/notes/${data.note.id}/edit` : `/notes/${data.note.id}`, { replace: true });
     } catch (e) {
       toast.error(e.message);
@@ -100,7 +100,7 @@ const CreateNote = () => {
                   </option>
                 ))}
               </select>
-              <p className="mt-1.5 text-xs text-ink-soft">Nested folder me rakhna ho to pehle wahan subfolder bana lo.</p>
+              <p className="mt-1.5 text-xs text-ink-soft">To file this note in a nested folder, create the subfolder first.</p>
             </div>
 
             <div>
@@ -116,7 +116,7 @@ const CreateNote = () => {
               <NoteEditor content={content} onChange={handleEditorChange} placeholder="Start writing your note..." />
             </div>
             <p className="mt-2 text-xs text-ink-soft">
-              Toolbar se headings, lists, code blocks aur images add karo. Save ke baad editor me autosave chalu ho jayega.
+              Use the toolbar to add headings, lists, code blocks and images. Autosave kicks in once the note is saved.
             </p>
           </div>
         </div>

@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Name is required'],
       trim: true,
-      maxlength: [60, 'Name 60 characters se chhota rakho'],
+      maxlength: [60, 'Name must be under 60 characters'],
     },
     email: {
       type: String,
@@ -15,12 +15,12 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\S+@\S+\.\S+$/, 'Valid email daalo'],
+      match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address'],
     },
     password: {
       type: String,
-      minlength: [6, 'Password kam se kam 6 characters ka ho'],
-      select: false, // by default query me nahi aayega
+      minlength: [6, 'Password must be at least 6 characters'],
+      select: false, // excluded from queries by default
     },
     avatar: { type: String, default: '' },
     provider: { type: String, enum: ['local', 'google'], default: 'local' },
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ createdAt: -1 });
 
-/** password hash karo, sirf tab jab change hua ho */
+/** hash the password, but only when it has changed */
 userSchema.pre('save', async function hashPassword(next) {
   if (!this.isModified('password') || !this.password) return next();
   const salt = await bcrypt.genSalt(10);

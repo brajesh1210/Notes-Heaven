@@ -1,6 +1,6 @@
 import { cn } from '../../lib/utils.js';
 
-/** Har page ka top heading + right side actions */
+/** Top heading + right-side actions for every page */
 const PageHeader = ({ title, subtitle, actions, className, compact = false }) => (
   <div className={cn('flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between', compact ? 'mb-4' : 'mb-6', className)}>
     <div className="min-w-0">

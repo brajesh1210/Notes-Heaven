@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 
 /**
  * Nested folders  =  materialized path pattern
- *   path      -> "Class 12/Physics"  (breadcrumb + descendants query ke liye)
+ *   path      -> "Class 12/Physics"  (breadcrumbs + descendant queries)
  *   ancestors -> [class12Id, physicsId] (root -> immediate parent)
  *
- * Isse nested folder ke saare descendants ek hi query me mil jate hain:
+ * This lets us fetch every descendant of a nested folder in a single query:
  *   Folder.find({ user, path: new RegExp('^' + folder.path + '/') })
  */
 const folderSchema = new mongoose.Schema(
@@ -15,7 +15,7 @@ const folderSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Folder name is required'],
       trim: true,
-      maxlength: [80, 'Folder name 80 characters se chhota rakho'],
+      maxlength: [80, 'Folder name must be under 80 characters'],
     },
     parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Folder', default: null, index: true },
     ancestors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Folder' }],
@@ -27,7 +27,7 @@ const folderSchema = new mongoose.Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-// ek parent ke andar naam duplicate na ho
+// names must be unique within a parent
 folderSchema.index({ user: 1, parent: 1, name: 1 }, { unique: true });
 
 const Folder = mongoose.model('Folder', folderSchema);

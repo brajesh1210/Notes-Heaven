@@ -48,7 +48,7 @@ export const destroyImage = async (publicId) => {
 export const assertCloudinaryReady = () => {
   if (!features.cloudinary) {
     throw badRequest(
-      'Image upload configured nahi hai. backend/.env me CLOUDINARY_CLOUD_NAME / API_KEY / API_SECRET daalo (free tier).'
+      'Image upload is not configured. Set CLOUDINARY_CLOUD_NAME / API_KEY / API_SECRET in backend/.env (free tier).'
     );
   }
 };

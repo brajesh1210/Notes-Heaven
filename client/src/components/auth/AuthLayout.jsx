@@ -1,7 +1,7 @@
 import Logo from '../brand/Logo.jsx';
 import { cn } from '../../lib/utils.js';
 
-/** Auth pages (login/signup/forgot/reset) ka common centered layout */
+/** Common centered layout for the auth pages (login/signup/forgot/reset) */
 const AuthLayout = ({ title, subtitle, children, footer, wide = false }) => (
   <div className="flex min-h-screen flex-col bg-canvas">
     <div className="flex flex-1 flex-col items-center px-4 py-8 sm:py-12">
@@ -21,7 +21,7 @@ const AuthLayout = ({ title, subtitle, children, footer, wide = false }) => (
   </div>
 );
 
-/** "or" divider + Google button - dono auth pages me */
+/** "or" divider + Google button - used on both auth pages */
 export const GoogleButton = ({ label = 'Continue with Google', onClick, disabled }) => (
   <button
     type="button"

@@ -5,9 +5,9 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 
 /**
- * Google OAuth ke baad backend yahan redirect karta hai:
+ * After Google OAuth the backend redirects here:
  *   /auth/callback?token=JWT
- * Token localStorage me daal kar /me se user load kar lete hain.
+ * We store the token and load the user via /me.
  */
 const OAuthCallback = () => {
   const [params] = useSearchParams();
@@ -23,10 +23,10 @@ const OAuthCallback = () => {
       const user = await refresh();
 
       if (user) {
-        toast.success(`Welcome, ${user.name.split(' ')[0]}! 🎉`);
+        toast.success(`Welcome, ${user.name.split(' ')[0]}!`);
         navigate('/dashboard', { replace: true });
       } else {
-        toast.error('Google login complete nahi ho paya. Dobara try karo.');
+        toast.error('Google sign-in could not be completed. Please try again.');
         navigate('/login?error=google_failed', { replace: true });
       }
     })();
@@ -34,7 +34,7 @@ const OAuthCallback = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-canvas">
-      <PageLoader label="Google se login ho raha hai..." />
+      <PageLoader label="Signing in with Google..." />
     </div>
   );
 };

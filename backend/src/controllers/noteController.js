@@ -9,7 +9,7 @@ import { retentionDaysLeft } from '../tasks/trashCleanup.js';
 
 /**
  * Note -> frontend-friendly JSON.
- * folderMap: Map(folderId -> folderDoc) taaki har note ke liye alag query na lage.
+ * folderMap: Map(folderId -> folderDoc) avoids one extra query per note.
  */
 export const serializeNote = (note, folderMap = new Map(), { withContent = false } = {}) => {
   const folderId = note.folder ? String(note.folder._id ?? note.folder) : null;
@@ -52,7 +52,7 @@ const folderMapFor = async (userId) => {
   return new Map(folders.map((f) => [String(f._id), f]));
 };
 
-/** tags: array of names -> Tag docs (naye bana deta hai agar na ho) */
+/** tags: array of names -> Tag docs (missing tags are created on the fly) */
 const resolveTags = async (userId, names = []) => {
   const clean = [...new Set(names.map((n) => String(n).trim().toLowerCase()).filter(Boolean))].slice(0, 12);
   if (!clean.length) return [];
@@ -120,7 +120,7 @@ export const createNote = asyncHandler(async (req, res) => {
 
   if (folder) {
     const f = await Folder.findOne({ _id: folder, user: req.userId });
-    if (!f) throw badRequest('Selected folder mila nahi');
+    if (!f) throw badRequest('Selected folder not found');
   }
 
   const tagIds = await resolveTags(req.userId, tags || []);
@@ -140,7 +140,7 @@ export const createNote = asyncHandler(async (req, res) => {
   await note.populate('tags', 'name color');
   const folderMap = await folderMapFor(req.userId);
 
-  return created(res, { note: serializeNote(note, folderMap, { withContent: true }) }, 'Note create ho gaya 🎉');
+  return created(res, { note: serializeNote(note, folderMap, { withContent: true }) }, 'Note created successfully');
 });
 
 // ------------------------------------------------------------------
@@ -148,7 +148,7 @@ export const createNote = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const getNote = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId }).populate('tags', 'name color');
-  if (!note) throw notFound('Note nahi mila');
+  if (!note) throw notFound('Note not found');
 
   const folderMap = await folderMapFor(req.userId);
   return ok(res, { note: serializeNote(note, folderMap, { withContent: true }) }, 'Note loaded');
@@ -159,7 +159,7 @@ export const getNote = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const updateNote = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
+  if (!note) throw notFound('Note not found');
 
   const { title, content, contentHtml, folder, tags, isPinned, isFavorite, createVersion } = req.body;
 
@@ -176,7 +176,7 @@ export const updateNote = asyncHandler(async (req, res) => {
   if (folder !== undefined) {
     if (folder) {
       const f = await Folder.findOne({ _id: folder, user: req.userId });
-      if (!f) throw badRequest('Selected folder mila nahi');
+      if (!f) throw badRequest('Selected folder not found');
     }
     note.folder = folder || null;
   }
@@ -190,16 +190,16 @@ export const updateNote = asyncHandler(async (req, res) => {
   await note.populate('tags', 'name color');
 
   const folderMap = await folderMapFor(req.userId);
-  return ok(res, { note: serializeNote(note, folderMap, { withContent: true }) }, 'Note update ho gaya');
+  return ok(res, { note: serializeNote(note, folderMap, { withContent: true }) }, 'Note updated successfully');
 });
 
 // ------------------------------------------------------------------
-// PATCH /api/notes/:id/autosave  (silent save - version nahi banata)
+// PATCH /api/notes/:id/autosave  (silent save - no version is created)
 // ------------------------------------------------------------------
 export const autosaveNote = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
-  if (note.trashedAt) throw badRequest('Trashed note autosave nahi ho sakta - pehle restore karo');
+  if (!note) throw notFound('Note not found');
+  if (note.trashedAt) throw badRequest('Trashed notes cannot autosave - restore the note first');
 
   const { title, content, contentHtml } = req.body;
   if (title !== undefined) note.title = String(title).trim() || 'Untitled note';
@@ -216,14 +216,14 @@ export const autosaveNote = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const trashNote = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
-  if (note.trashedAt) throw badRequest('Note pehle se trash me hai');
+  if (!note) throw notFound('Note not found');
+  if (note.trashedAt) throw badRequest('This note is already in trash');
 
   note.moveToTrash();
   await note.save();
 
   const folderMap = await folderMapFor(req.userId);
-  return ok(res, { note: serializeNote(note, folderMap) }, 'Note trash me chala gaya - 5 din baad permanently delete ho jayega');
+  return ok(res, { note: serializeNote(note, folderMap) }, 'Note moved to trash - it will be permanently deleted after 5 days');
 });
 
 // ------------------------------------------------------------------
@@ -231,13 +231,13 @@ export const trashNote = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const restoreNote = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
+  if (!note) throw notFound('Note not found');
 
   note.restoreFromTrash();
   await note.save();
 
   const folderMap = await folderMapFor(req.userId);
-  return ok(res, { note: serializeNote(note, folderMap) }, 'Note wapas restore ho gaya 🎉');
+  return ok(res, { note: serializeNote(note, folderMap) }, 'Note restored successfully');
 });
 
 // ------------------------------------------------------------------
@@ -245,8 +245,8 @@ export const restoreNote = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const deleteNotePermanently = asyncHandler(async (req, res) => {
   const note = await Note.findOneAndDelete({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
-  return ok(res, { id: note._id }, 'Note permanently delete ho gaya');
+  if (!note) throw notFound('Note not found');
+  return ok(res, { id: note._id }, 'Note permanently deleted');
 });
 
 // ------------------------------------------------------------------
@@ -266,7 +266,7 @@ export const listTrash = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const emptyTrash = asyncHandler(async (req, res) => {
   const result = await Note.deleteMany({ user: req.userId, trashedAt: { $ne: null } });
-  return ok(res, { deletedCount: result.deletedCount }, `${result.deletedCount} note permanently delete ho gaye`);
+  return ok(res, { deletedCount: result.deletedCount }, `${result.deletedCount} notes permanently deleted`);
 });
 
 // ------------------------------------------------------------------
@@ -274,7 +274,7 @@ export const emptyTrash = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const duplicateNote = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
+  if (!note) throw notFound('Note not found');
 
   const copy = new Note({
     user: note.user,
@@ -290,7 +290,7 @@ export const duplicateNote = asyncHandler(async (req, res) => {
   await copy.populate('tags', 'name color');
 
   const folderMap = await folderMapFor(req.userId);
-  return created(res, { note: serializeNote(copy, folderMap, { withContent: true }) }, 'Note duplicate ho gaya');
+  return created(res, { note: serializeNote(copy, folderMap, { withContent: true }) }, 'Note duplicated');
 });
 
 // ------------------------------------------------------------------
@@ -298,18 +298,18 @@ export const duplicateNote = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const togglePin = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
+  if (!note) throw notFound('Note not found');
   note.isPinned = req.body?.value === undefined ? !note.isPinned : Boolean(req.body.value);
   await note.save();
-  return ok(res, { id: note._id, isPinned: note.isPinned }, note.isPinned ? 'Note pin ho gaya 📌' : 'Pin hata diya');
+  return ok(res, { id: note._id, isPinned: note.isPinned }, note.isPinned ? 'Note pinned' : 'Note unpinned');
 });
 
 export const toggleFavorite = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
+  if (!note) throw notFound('Note not found');
   note.isFavorite = req.body?.value === undefined ? !note.isFavorite : Boolean(req.body.value);
   await note.save();
-  return ok(res, { id: note._id, isFavorite: note.isFavorite }, note.isFavorite ? 'Favorite me add ho gaya ⭐' : 'Favorite se hata diya');
+  return ok(res, { id: note._id, isFavorite: note.isFavorite }, note.isFavorite ? 'Added to favorites' : 'Removed from favorites');
 });
 
 // ------------------------------------------------------------------
@@ -317,20 +317,20 @@ export const toggleFavorite = asyncHandler(async (req, res) => {
 // ------------------------------------------------------------------
 export const getVersions = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId }).select('versions');
-  if (!note) throw notFound('Note nahi mila');
+  if (!note) throw notFound('Note not found');
   const versions = (note.versions || []).map((v, index) => ({ index, title: v.title, savedAt: v.savedAt }));
   return ok(res, { versions }, 'Versions loaded');
 });
 
 export const restoreVersion = asyncHandler(async (req, res) => {
   const note = await Note.findOne({ _id: req.params.id, user: req.userId });
-  if (!note) throw notFound('Note nahi mila');
+  if (!note) throw notFound('Note not found');
 
   const index = Number(req.params.index);
   const version = (note.versions || [])[index];
-  if (!version) throw notFound('Version nahi mila');
+  if (!version) throw notFound('Version not found');
 
-  // current state ko version history me save karo (undo possible rahe)
+  // save the current state to version history first (keeps undo possible)
   note.versions = [...(note.versions || []), { title: note.title, content: note.content, savedAt: new Date() }].slice(-10);
   note.title = version.title;
   note.content = version.content;
@@ -339,7 +339,7 @@ export const restoreVersion = asyncHandler(async (req, res) => {
   await note.populate('tags', 'name color');
 
   const folderMap = await folderMapFor(req.userId);
-  return ok(res, { note: serializeNote(note, folderMap, { withContent: true }) }, 'Purana version restore ho gaya');
+  return ok(res, { note: serializeNote(note, folderMap, { withContent: true }) }, 'Previous version restored');
 });
 
 // ------------------------------------------------------------------

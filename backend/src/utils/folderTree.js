@@ -1,12 +1,12 @@
 /**
  * Folder tree helpers.
- * Serialized folders me `id` hota hai aur mongoose docs me `_id`,
- * isliye ye helpers dono handle karte hain.
+ * Serialized folders expose `id` while mongoose docs expose `_id`,
+ * so these helpers handle both shapes.
  */
 const nodeId = (f) => f._id ?? f.id;
 const key = (id) => (id ? String(id) : 'root');
 
-/** Flat folder list -> nested tree (children arrays ke saath) */
+/** Flat folder list -> nested tree (with children arrays) */
 export const buildTree = (folders = [], parentId = null) => {
   const grouped = new Map();
   folders.forEach((f) => {
@@ -16,7 +16,7 @@ export const buildTree = (folders = [], parentId = null) => {
   });
 
   const walk = (id, depth = 0) => {
-    if (depth > 20) return []; // safety: kabhi cycle ho to infinite recursion na ho
+    if (depth > 20) return []; // safety: stop if a cycle ever causes infinite recursion
     const kids = grouped.get(key(id)) || [];
     return kids
       .slice()
@@ -27,7 +27,7 @@ export const buildTree = (folders = [], parentId = null) => {
   return walk(parentId);
 };
 
-/** Kisi folder ke saare descendants ke ids (mongoose docs ya serialized dono) */
+/** Ids of all descendants of a folder (works for mongoose docs and serialized folders) */
 export const descendantIds = (folders = [], rootId) => {
   const ids = [];
   const collect = (id) => {
@@ -42,7 +42,7 @@ export const descendantIds = (folders = [], rootId) => {
   return ids;
 };
 
-/** folder + folderMap (id -> doc) se breadcrumb path: "Class 12/Physics" */
+/** Breadcrumb path from folder + folderMap (id -> doc): "Class 12/Physics" */
 export const breadcrumbOf = (folder, folderMap) => {
   if (!folder) return '';
   const parts = [];

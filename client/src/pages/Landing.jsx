@@ -39,42 +39,42 @@ const FEATURE_CARDS = [
   {
     icon: PenSquare,
     title: 'Rich text editor',
-    text: 'Headings, lists, quotes, links aur formatted code blocks - sab kuch ek clean editor me.',
+    text: 'Headings, lists, quotes, links and formatted code blocks - everything in one clean editor.',
   },
   {
     icon: Code2,
     title: 'Code blocks with syntax highlight',
-    text: 'DSA, JavaScript, Python - jaise likha hai waise hi dikhega. Copy karna ek click.',
+    text: 'Your DSA, JavaScript or Python snippets render exactly as written. Copy in one click.',
   },
   {
     icon: ImageIcon,
     title: 'Image insertion',
-    text: 'Screenshots aur diagrams drag-drop karo, Cloudinary par secure upload ho jayenge.',
+    text: 'Drag and drop screenshots and diagrams - images are uploaded and stored securely in the cloud.',
   },
   {
     icon: FolderTree,
     title: 'Folders with nesting',
-    text: 'Class 12 → Physics → Optics. Jitni deep chahiye utni nesting, bina kisi confusion ke.',
+    text: 'Class 12 → Physics → Optics. Nest as deep as you need, without ever losing your place.',
   },
   {
     icon: Search,
     title: 'Instant search',
-    text: 'Title, content, tag ya folder - type karte hi results. Filters se exact note milta hai.',
+    text: 'Titles, content, tags or folders - results as you type, narrowed down by filters.',
   },
   {
     icon: Pin,
     title: 'Pin & favorite',
-    text: 'Important notes upar pin karo, favorites ko star se mark karo.',
+    text: 'Pin important notes to the top and mark favorites with a star.',
   },
   {
     icon: Trash2,
     title: 'Trash with 5-day safety',
-    text: 'Galti se delete? 5 din tak trash me rahega - recover karo ya turant permanently delete.',
+    text: 'Deleted by mistake? Notes stay in trash for 5 days - restore them or delete forever.',
   },
   {
     icon: Download,
     title: 'Export as PDF',
-    text: 'Kisi bhi note ko ek click me PDF/Markdown me export karo.',
+    text: 'Export any note to PDF or Markdown in a single click.',
   },
 ];
 
@@ -155,7 +155,7 @@ const Landing = () => {
 
             <p className="mt-4 max-w-[460px] text-[14.5px] leading-relaxed text-ink-muted">
               Simple. Clean. Powerful. The all-in-one note management app for students, learners and lifelong learners - rich text,
-              code blocks, images, nested folders aur instant search ke saath.
+              code blocks, images, nested folders and instant search.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -206,10 +206,10 @@ const Landing = () => {
           <div className="mx-auto max-w-[620px] text-center">
             <span className="chip">Everything you need</span>
             <h2 className="mt-4 text-[30px] font-bold tracking-[-0.02em] text-ink sm:text-[36px]">
-              Notes banane, dhundhne aur sambhalne ka pura setup
+              Everything you need to create, find and keep your notes
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
-              Lecture ke rough notes ho ya exam ki final revision - {APP_NAME} sab sambhal leta hai.
+              From lecture rough notes to final exam revision - {APP_NAME} keeps it all safe.
             </p>
           </div>
 
@@ -233,13 +233,13 @@ const Landing = () => {
           <div className="grid items-center gap-10 lg:grid-cols-2">
             <div>
               <span className="chip">3 simple steps</span>
-              <h2 className="mt-4 text-[28px] font-bold tracking-[-0.02em] text-ink sm:text-[34px]">Shuru karne me 30 second lagte hain</h2>
+              <h2 className="mt-4 text-[28px] font-bold tracking-[-0.02em] text-ink sm:text-[34px]">Up and running in 30 seconds</h2>
 
               <ol className="mt-7 space-y-5">
                 {[
-                  { t: 'Account banao', d: 'Email se ya Google se - ek click me login.' },
-                  { t: 'Folder + note likho', d: 'Class 12 → Physics banao, aur note likhna shuru karo. Autosave chalta rehta hai.' },
-                  { t: 'Kabhi mat kho', d: 'Search, pin, favorite, PDF export aur 5-day trash safety.' },
+                  { t: 'Create your account', d: 'Sign up with email or Google - done in one click.' },
+                  { t: 'Write your first note', d: 'Create a folder and start writing - autosave keeps everything safe.' },
+                  { t: 'Never lose anything', d: 'Search, pins, favorites, PDF export and 5-day trash protection.' },
                 ].map((s, i) => (
                   <li key={s.t} className="flex gap-4">
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-700 text-[13px] font-bold text-white">
@@ -254,7 +254,7 @@ const Landing = () => {
               </ol>
             </div>
 
-            {/* mini UI mock - design ka dashboard jhalak */}
+            {/* mini UI mock - a glimpse of the dashboard design */}
             <div className="card overflow-hidden p-4">
               <div className="flex items-center justify-between border-b border-line pb-3">
                 <div className="flex items-center gap-2">
@@ -263,7 +263,7 @@ const Landing = () => {
                   </span>
                   <span className="text-[13.5px] font-bold text-ink">{APP_NAME}</span>
                 </div>
-                <span className="chip-muted">Good Morning 👋</span>
+                <span className="chip-muted">Good Morning</span>
               </div>
 
               <div className="mt-3 grid grid-cols-3 gap-2">
@@ -305,18 +305,18 @@ const Landing = () => {
       <section id="about" className="bg-canvas py-16 sm:py-20">
         <div className="mx-auto max-w-[820px] px-4 text-center sm:px-6">
           <span className="chip">About</span>
-          <h2 className="mt-4 text-[28px] font-bold tracking-[-0.02em] text-ink sm:text-[34px]">Students ke liye banaya gaya, students ke saath</h2>
+          <h2 className="mt-4 text-[28px] font-bold tracking-[-0.02em] text-ink sm:text-[34px]">Built for students, with students</h2>
           <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
-            {APP_NAME} ek MERN stack (MongoDB, Express, React, Node) note management app hai. Ye isliye banaya gaya kyunki lecture ke
-            rough notes, important questions aur revision points kahin kho jate the. Yahan sab kuch organized rehta hai - aur agar
-            galti se delete bhi ho jaye, 5 din tak trash me safe rehta hai.
+            {APP_NAME} is a note management app built around the way students actually work. Lecture
+            rough notes, important questions and revision points used to get lost in every possible place. Here everything
+            stays organized - and even if something is deleted by mistake, it stays safe in trash for 5 days.
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
             {[
-              { k: 'Dated', v: 'Har note ke saath created + last edited time' },
-              { k: 'Nested', v: 'Folder ke andar folder, jitni deep chahiye' },
-              { k: 'Fast', v: 'Instant search - type karte hi result' },
+              { k: 'Dated', v: 'Created and last-edited time on every note' },
+              { k: 'Nested', v: 'Folders inside folders, as deep as you need' },
+              { k: 'Fast', v: 'Instant search - results as you type' },
             ].map((x) => (
               <div key={x.k} className="card p-4 text-left">
                 <p className="text-[13px] font-bold text-brand-700">{x.k}</p>
@@ -334,9 +334,9 @@ const Landing = () => {
             <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/10" />
             <div className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-white/10" />
 
-            <h2 className="relative text-[26px] font-bold tracking-[-0.02em] text-white sm:text-[32px]">Aaj se notes likhna shuru karo - free me</h2>
+            <h2 className="relative text-[26px] font-bold tracking-[-0.02em] text-white sm:text-[32px]">Start writing your notes today - for free</h2>
             <p className="relative mx-auto mt-3 max-w-[520px] text-[14.5px] leading-relaxed text-blue-100">
-              Ek account banao aur apna pura academic notebook online sambhalo. Mobile, tablet, laptop - har device par same notes.
+              One account keeps your entire academic notebook online. The same notes on mobile, tablet and laptop.
             </p>
 
             <div className="relative mt-7 flex flex-wrap justify-center gap-3">

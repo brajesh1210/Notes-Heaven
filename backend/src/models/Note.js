@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import { env } from '../config/env.js';
 
 /**
- * Note content TipTap JSON me store hota hai (rich text + code blocks + images),
- * saath me `contentHtml` (render/PDF ke liye) aur `contentText` (search/snippet ke liye).
+ * Note content is stored as TipTap JSON (rich text + code blocks + images),
+ * plus `contentHtml` (rendering / PDF export) and `contentText` (search snippets).
  */
 const versionSchema = new mongoose.Schema(
   {
@@ -20,15 +20,15 @@ const noteSchema = new mongoose.Schema(
     title: {
       type: String,
       trim: true,
-      maxlength: [200, 'Title 200 characters se chhota rakho'],
+      maxlength: [200, 'Title must be under 200 characters'],
       default: 'Untitled note',
     },
 
     // TipTap JSON document
     content: { type: mongoose.Schema.Types.Mixed, default: null },
-    // Last rendered HTML (Note View page + PDF export ke liye)
+    // Last rendered HTML (Note View page + PDF export)
     contentHtml: { type: String, default: '' },
-    // Plain text - search / snippet ke liye
+    // Plain text - used for search results and snippets
     contentText: { type: String, default: '' },
 
     folder: { type: mongoose.Schema.Types.ObjectId, ref: 'Folder', default: null, index: true },
@@ -42,7 +42,7 @@ const noteSchema = new mongoose.Schema(
 
     // ---- trash ----
     trashedAt: { type: Date, default: null, index: true },
-    // MongoDB TTL index: scheduledFor par note automatically DB se hat jayega
+    // MongoDB TTL index: the note is removed from the DB automatically at scheduledFor
     scheduledFor: { type: Date, default: null },
 
     lastEditedAt: { type: Date, default: Date.now },
@@ -56,7 +56,7 @@ noteSchema.index({ user: 1, trashedAt: 1, updatedAt: -1 });
 noteSchema.index({ user: 1, isPinned: -1, updatedAt: -1 });
 noteSchema.index({ user: 1, folder: 1, trashedAt: 1 });
 noteSchema.index({ title: 'text', contentText: 'text' });
-// 5 din baad automatically purge (MongoDB khud delete kar dega)
+// automatically purged after 5 days (MongoDB deletes it itself)
 noteSchema.index({ scheduledFor: 1 }, { expireAfterSeconds: 0, sparse: true });
 
 // ---- Helpers ----
@@ -89,7 +89,7 @@ noteSchema.virtual('snippet').get(function snippet() {
   return text.length > 160 ? `${text.slice(0, 160)}...` : text;
 });
 
-/** Trash me bhejo aur auto-delete date set karo */
+/** Move to trash and set the auto-delete date */
 noteSchema.methods.moveToTrash = function moveToTrash() {
   this.trashedAt = new Date();
   this.isPinned = false;

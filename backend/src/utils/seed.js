@@ -4,13 +4,13 @@
  *   cd backend
  *   npm run seed
  *
- * Ye script:
- *   - demo user banata hai  (email: demo@notesheaven.app / password: demo1234)
- *   - UI design wale folders banata hai (Class 12, JEE Preparation, Personal, Work + nested)
- *   - 10 sample notes daalta hai (Business Environment, Microeconomics, JEE Physics...)
- *   - 1 note trash me daalta hai (Trash page test karne ke liye)
+ * This script:
+ *   - creates the demo user  (email: demo@notesheaven.app / password: demo1234)
+ *   - creates the folders from the UI design (Class 12, JEE Preparation, Personal, Work + nested)
+ *   - inserts 10 sample notes (Business Environment, Microeconomics, JEE Physics...)
+ *   - puts 1 note in the trash (to test the Trash page)
  *
- * Same email ke saath dubara chalane par pehle purana demo data delete hota hai.
+ * Running it again with the same email deletes the old demo data first.
  */
 import mongoose from 'mongoose';
 import { env } from '../config/env.js';
@@ -23,7 +23,7 @@ import logger from './logger.js';
 const DEMO_EMAIL = 'demo@notesheaven.app';
 const DEMO_PASSWORD = 'demo1234';
 
-// TipTap JSON banane ke chhote helper
+// small helpers to build TipTap JSON
 const para = (text) => ({ type: 'paragraph', content: [{ type: 'text', text }] });
 const heading = (text, level = 2) => ({ type: 'heading', attrs: { level }, content: [{ type: 'text', text }] });
 const bullet = (items) => ({
@@ -102,13 +102,13 @@ const buildNote = (userId, folderId, tagIds, { title, nodes, pinned = false, fav
 
 const run = async () => {
   if (!env.mongoUri) {
-    logger.error('MONGO_URI missing - backend/.env bharo');
+    logger.error('MONGO_URI missing - set it in backend/.env');
     process.exit(1);
   }
   await mongoose.connect(env.mongoUri);
   logger.success('MongoDB connected (seed)');
 
-  // purana demo data saaf karo
+  // clear previous demo data
   const old = await User.findOne({ email: DEMO_EMAIL });
   if (old) {
     await Promise.all([
@@ -147,7 +147,7 @@ const run = async () => {
     });
     folderMap[def.name] = folder;
   }
-  logger.success(`${folderDefs.length} folders banaye (nested included)`);
+  logger.success(`${folderDefs.length} folders created (including nested ones)`);
 
   const tagDefs = [
     { name: 'business', color: '#1D4ED8' },
@@ -174,14 +174,14 @@ const run = async () => {
         ]),
         heading('2. Components'),
         ordered(['Internal Environment', 'External Environment']),
-        para('External environment me micro aur macro dono aate hain - suppliers, customers, competitors, government policy, tech change etc.'),
+        para('The external environment includes micro and macro factors - suppliers, customers, competitors, government policy, technology change, etc.'),
       ],
     }),
     buildNote(user._id, folderMap['Class 12/Accountancy']._id, [tagMap.important._id], {
       title: 'Microeconomics - Introduction',
       hoursAgo: 4,
       nodes: [
-        heading('Microeconomics kya hai?'),
+        heading('What is Microeconomics?'),
         bullet(['Individual unit level study', 'Demand & supply, elasticity, market structures']),
         code('const demand = (price, qty) => price * qty; // total revenue', 'javascript'),
       ],
@@ -193,29 +193,29 @@ const run = async () => {
       nodes: [
         heading('Key Formulas'),
         ordered(['v = u + at', 's = ut + ½at²', 'v² = u² + 2as']),
-        para('Graphs yaad rakho: v-t graph ka slope = acceleration, area = displacement.'),
+        para('Remember the graphs: slope of the v-t graph = acceleration, area = displacement.'),
         code('// relative velocity\nv_ab = v_a - v_b', 'javascript'),
       ],
     }),
     buildNote(user._id, folderMap['JEE Preparation']._id, [], {
       title: 'Chemistry - Periodic Table',
       hoursAgo: 24,
-      nodes: [heading('Groups & Periods'), bullet(['Group me properties similar hoti hain', 'Period me left->right metallic character ghatta hai'])],
+      nodes: [heading('Groups & Periods'), bullet(['Elements in a group share similar properties', 'Metallic character decreases from left to right across a period'])],
     }),
     buildNote(user._id, folderMap['Personal']._id, [tagMap.revision._id], {
       title: 'Personal Goals',
       hoursAgo: 24,
-      nodes: [heading('2026 Goals'), ordered(['Daily 2 hours DSA', 'Notes Heaven launch karna', 'Gym 5 days/week'])],
+      nodes: [heading('2026 Goals'), ordered(['Daily 2 hours of DSA practice', 'Launch Notes Heaven', 'Gym 5 days a week'])],
     }),
     buildNote(user._id, folderMap['Class 12/Business Studies']._id, [tagMap.business._id, tagMap.revision._id], {
       title: 'Business Studies Notes',
       hoursAgo: 24,
-      nodes: [para('Management principles, planning, organising, staffing, directing aur controlling ke notes.')],
+      nodes: [para('Notes on management principles: planning, organising, staffing, directing and controlling.')],
     }),
     buildNote(user._id, folderMap['Class 12/Business Studies']._id, [tagMap.business._id, tagMap.important._id], {
       title: 'Business Environment - Important Questions',
       hoursAgo: 24,
-      nodes: [para('Q1. Business environment ke features batao? Q2. Micro vs macro environment difference?')],
+      nodes: [para('Q1. Features of the business environment? Q2. Difference between micro and macro environment?')],
     }),
     buildNote(user._id, folderMap['Class 12/Accountancy']._id, [tagMap.business._id], {
       title: 'Principles of Management',
@@ -225,19 +225,19 @@ const run = async () => {
     buildNote(user._id, folderMap['Class 12']._id, [tagMap.business._id], {
       title: 'Business Environment - Summary',
       hoursAgo: 96,
-      nodes: [para('Chapter 1 ka quick revision summary: environment ke dimensions aur unka business par impact.')],
+      nodes: [para('Quick revision summary of Chapter 1: dimensions of the environment and their impact on business.')],
     }),
     buildNote(user._id, folderMap['Work']._id, [], {
       title: 'Old meeting notes (trash demo)',
       hoursAgo: 120,
       trashed: true,
-      nodes: [para('Ye note trash me hai - 5 din baad auto delete ho jayega. Recover ya permanently delete kar sakte ho.')],
+      nodes: [para('This note is in the trash - it will be auto-deleted after 5 days. You can restore it or delete it permanently.')],
     }),
   ];
 
   await Note.insertMany(notes);
   logger.success(`${notes.length} demo notes insert kiye`);
-  logger.info('Ab chalao: npm run dev  ->  http://localhost:5000/api/health');
+  logger.info('Next: npm run dev  ->  http://localhost:5000/api/health');
 
   await mongoose.connection.close();
   process.exit(0);

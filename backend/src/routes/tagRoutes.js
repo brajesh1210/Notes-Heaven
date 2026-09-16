@@ -6,7 +6,7 @@ import { validate, body } from '../middleware/validator.js';
 const router = Router();
 router.use(protect);
 
-router.route('/').get(tags.listTags).post(validate(body('name').required('Tag name daalo')), tags.createTag);
+router.route('/').get(tags.listTags).post(validate(body('name').required('Tag name is required')), tags.createTag);
 router.route('/:id').put(tags.updateTag).delete(tags.deleteTag);
 
 export default router;

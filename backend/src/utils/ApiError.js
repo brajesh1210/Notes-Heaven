@@ -13,4 +13,4 @@ export const unauthorized = (m = 'Not authorized, please login') => new ApiError
 export const forbidden = (m = 'You are not allowed to perform this action') => new ApiError(403, m);
 export const notFound = (m = 'Resource not found') => new ApiError(404, m);
 export const conflict = (m = 'Resource already exists') => new ApiError(409, m);
-export const tooMany = (m = 'Too many requests, thoda ruk ke try karo') => new ApiError(429, m);
+export const tooMany = (m = 'Too many requests, please slow down and try again') => new ApiError(429, m);

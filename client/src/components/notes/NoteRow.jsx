@@ -3,7 +3,7 @@ import { FileText, Pin, Star } from 'lucide-react';
 import { cn, timeAgo } from '../../lib/utils.js';
 import NoteActionsMenu from './NoteActionsMenu.jsx';
 
-/** Dashboard / folder page ka note row (icon + title + folder • time + ...) */
+/** Note row for the Dashboard / folder pages (icon + title + folder • time + ...) */
 const NoteRow = ({ note, onChanged, onRemoved, showFolder = true, className }) => (
   <div
     className={cn(
@@ -25,7 +25,7 @@ const NoteRow = ({ note, onChanged, onRemoved, showFolder = true, className }) =
       <p className="mt-0.5 truncate text-[12.5px] text-ink-soft">
         {showFolder && note.folder?.name ? `${note.folder.name} · ` : ''}
         {timeAgo(note.lastEditedAt || note.updatedAt)}
-        {note.isTrashed && note.daysLeft !== null && note.daysLeft !== undefined ? ` · ${note.daysLeft} din me delete` : ''}
+        {note.isTrashed && note.daysLeft !== null && note.daysLeft !== undefined ? ` · deletes in ${note.daysLeft}d` : ''}
       </p>
     </Link>
 

@@ -2,7 +2,7 @@ import Modal from './Modal.jsx';
 import Button from './Button.jsx';
 import { AlertTriangle, Trash2, RotateCcw } from 'lucide-react';
 
-/** Delete / restore jaise destructive actions confirm karne ke liye */
+/** Confirms destructive actions such as delete / restore */
 const ConfirmDialog = ({
   open,
   onClose,
@@ -42,7 +42,7 @@ const ConfirmDialog = ({
           <Icon size={18} />
         </span>
         <p className="text-sm leading-relaxed text-ink-muted">
-          {description || 'Ye action undo nahi ho sakta. Continue karna hai?'}
+          {description || 'This action cannot be undone. Do you want to continue?'}
         </p>
       </div>
     </Modal>

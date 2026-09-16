@@ -1,5 +1,5 @@
 /**
- * Express async controller wrapper - try/catch likhne ki zarurat nahi.
+ * Express async controller wrapper - no manual try/catch needed.
  *   router.get('/', asyncHandler(async (req, res) => { ... }))
  */
 export const asyncHandler = (fn) => (req, res, next) =>

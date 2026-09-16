@@ -24,7 +24,7 @@ const Login = () => {
 
   useEffect(() => {
     if (new URLSearchParams(location.search).get('error') === 'google_failed') {
-      toast.error('Google login fail ho gaya. Dobara try karo ya email se login karo.');
+      toast.error('Google sign-in failed. Please try again or sign in with your email.');
     }
     api
       .get('/auth/providers')
@@ -35,9 +35,9 @@ const Login = () => {
   const submit = async (e) => {
     e.preventDefault();
     const errs = {};
-    if (!form.email.trim()) errs.email = 'Email daalo';
-    else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = 'Valid email daalo';
-    if (!form.password) errs.password = 'Password daalo';
+    if (!form.email.trim()) errs.email = 'Email is required';
+    else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = 'Please enter a valid email address';
+    if (!form.password) errs.password = 'Password is required';
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
@@ -47,7 +47,7 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (err) {
       toast.error(err.message);
-      if (err.status === 401) setErrors({ password: 'Email ya password galat hai' });
+      if (err.status === 401) setErrors({ password: 'Incorrect email or password' });
     } finally {
       setLoading(false);
     }
@@ -108,9 +108,6 @@ const Login = () => {
       <OrDivider />
 
       <GoogleButton onClick={googleLogin} disabled={!googleEnabled} />
-      {!googleEnabled && (
-        <p className="mt-2 text-center text-[11.5px] text-ink-soft">Google login off hai - backend .env me GOOGLE_CLIENT_ID/SECRET daalo.</p>
-      )}
     </AuthLayout>
   );
 };

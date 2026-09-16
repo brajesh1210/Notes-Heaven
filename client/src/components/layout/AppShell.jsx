@@ -4,7 +4,7 @@ import SidebarContent from './Sidebar.jsx';
 import Logo from '../brand/Logo.jsx';
 import { FoldersProvider } from '../../context/FoldersContext.jsx';
 
-/** Logged-in app ka layout: fixed sidebar (desktop) + topbar + content */
+/** Layout for the logged-in app: fixed sidebar (desktop) + topbar + content */
 const AppShell = () => (
   <FoldersProvider>
     <div className="min-h-screen bg-canvas">
