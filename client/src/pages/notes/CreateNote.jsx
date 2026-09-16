@@ -5,6 +5,8 @@ import Button from '../../components/ui/Button.jsx';
 import TagInput from '../../components/notes/TagInput.jsx';
 import NoteEditor from '../../components/editor/NoteEditor.jsx';
 import { api } from '../../lib/api.js';
+import { TEMPLATES } from '../../lib/templates.js';
+import { cn } from '../../lib/utils.js';
 import { useFolders } from '../../context/FoldersContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 
@@ -25,6 +27,7 @@ const CreateNote = () => {
   const [content, setContent] = useState(null);
   const [saving, setSaving] = useState(false);
   const [titleError, setTitleError] = useState('');
+  const [template, setTemplate] = useState('blank');
 
   const handleEditorChange = ({ json }) => setContent(json);
 
@@ -107,6 +110,27 @@ const CreateNote = () => {
               <span className="label">Tags (optional)</span>
               <TagInput value={tags} onChange={setTags} allTags={allTags} onTagsLoaded={setAllTags} />
             </div>
+          </div>
+
+          {/* templates */}
+          <div>
+            <span className="label">Start from a template</span>
+            <div className="flex flex-wrap gap-2">
+              {TEMPLATES.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => {
+                    setTemplate(t.id);
+                    setContent(t.content ? JSON.parse(JSON.stringify(t.content)) : null);
+                  }}
+                  className={cn('chip-muted transition hover:bg-brand-50 hover:text-brand-700', template === t.id && 'bg-brand-50 text-brand-700')}
+                >
+                  {t.name}
+                </button>
+              ))}
+            </div>
+            <p className="mt-1.5 text-xs text-ink-soft">Applying a template replaces the current draft content.</p>
           </div>
 
           {/* content */}

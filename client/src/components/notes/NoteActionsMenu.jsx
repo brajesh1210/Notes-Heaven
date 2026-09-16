@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MoreVertical, Pencil, Pin, PinOff, Star, StarOff, Copy, Download, Trash2, RotateCcw, Eye, FileJson, FileText } from 'lucide-react';
+import { MoreVertical, Pencil, Pin, PinOff, Star, StarOff, Copy, Download, Trash2, RotateCcw, Eye, FileJson, FileText, History } from 'lucide-react';
 import Menu, { MenuItem, MenuDivider } from '../ui/Menu.jsx';
 import { IconButton } from '../ui/Button.jsx';
 import ConfirmDialog from '../ui/ConfirmDialog.jsx';
+import VersionsModal from './VersionsModal.jsx';
 import { api } from '../../lib/api.js';
 import { useToast } from '../../context/ToastContext.jsx';
 import { exportNoteAsPdf, exportNoteAsMarkdown, exportNoteAsJson } from '../../lib/export.js';
@@ -16,6 +17,7 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
   const navigate = useNavigate();
   const toast = useToast();
   const [confirm, setConfirm] = useState(null); // 'trash' | 'delete'
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const patch = async (path, body, message) => {
@@ -113,6 +115,8 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
 
         <MenuItem icon={Copy} onClick={duplicate}>Duplicate</MenuItem>
 
+        <MenuItem icon={History} onClick={() => setHistoryOpen(true)}>Version history</MenuItem>
+
         <MenuDivider />
         <MenuItem
           icon={Download}
@@ -155,6 +159,9 @@ const NoteActionsMenu = ({ note, onChanged, onRemoved, showOpen = true, size = 1
           <MenuItem icon={Trash2} danger onClick={() => setConfirm('trash')}>Move to trash</MenuItem>
         )}
       </Menu>
+
+      <VersionsModal note={note} open={historyOpen} onClose={() => setHistoryOpen(false)} onRestored={onChanged} />
+
 
       <ConfirmDialog
         open={confirm === 'trash'}

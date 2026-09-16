@@ -25,7 +25,7 @@ Notes Heaven is delivered in five phases. Each phase ships as a zip with a merge
 - Real SMTP forgot-password + welcome emails (Gmail/SES setup guide)
 - Profile page: avatar upload, name/email edit, change password, delete account
 
-## Phase 3 — UX polish
+## Phase 3 — UX polish (done)
 
 - Dark mode with system preference + manual toggle
 - Note version history UI (view & restore old versions)

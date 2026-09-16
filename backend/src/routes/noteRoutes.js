@@ -13,6 +13,8 @@ router.get('/trash', notes.listTrash);
 router.delete('/trash/empty', notes.emptyTrash);
 router.get('/export/markdown', notes.exportAllMarkdown);
 
+router.patch('/bulk', notes.bulkAction);
+
 router.route('/').get(notes.listNotes).post(notes.createNote);
 
 router

@@ -334,6 +334,24 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
 
   // ---------------- notes ----------------
   if (seg[0] === 'notes') {
+    if (seg[1] === 'bulk' && m === 'patch') {
+      const { ids = [], action, value } = data;
+      const targets = db.notes.filter((n) => ids.includes(n.id));
+      let updated = 0;
+      for (const n of targets) {
+        if (action === 'pin') n.isPinned = Boolean(value);
+        else if (action === 'favorite') n.isFavorite = Boolean(value);
+        else if (action === 'trash') { if (n.trashedAt) continue; n.trashedAt = new Date().toISOString(); n.daysLeft = 5; }
+        else if (action === 'restore') { if (!n.trashedAt) continue; n.trashedAt = null; n.daysLeft = null; }
+        else if (action === 'move') n.folderId = value || null;
+        else if (action === 'tag') { const t = db.tags.find((x) => x.name === String(value).toLowerCase()); if (!t || n.tagIds.includes(t.id)) continue; n.tagIds.push(t.id); }
+        else continue;
+        updated += 1;
+      }
+      return okRes({ updated }, `${updated} note${updated === 1 ? '' : 's'} updated`);
+    }
+    if (seg[1] && seg[2] === 'versions' && m === 'get') return okRes({ versions: [] }, 'Versions loaded');
+    if (seg[1] && seg[2] === 'versions' && seg[4] === 'restore' && m === 'post') return err(404, 'Version not found');
     const sub = seg[1];
 
     if (sub === 'stats' && seg[2] === 'dashboard') {

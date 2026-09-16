@@ -15,6 +15,11 @@ A clean, fast note-management web app for students and lifelong learners. Create
 - **Export** — any note (or all notes) to PDF or Markdown
 - **Authentication** — email + password (JWT in an httpOnly cookie), Google OAuth, and a forgot-password email flow
 - **Profile & account** — avatar upload, name/email editing, password change and account deletion with cascade cleanup
+- **Dark mode** — OS-preference aware with a manual toggle, light design untouched
+- **Keyboard shortcuts** — Ctrl+K search, Ctrl+S save, Ctrl+/ help, editor formatting keys
+- **Version history UI** — every manual save keeps a restoreable snapshot
+- **Bulk actions** — select notes to move, tag, pin, favorite or trash in one go
+- **Templates** — lecture notes, meeting notes and revision sheets pre-fill the editor
 - **Fully responsive** — the same experience on mobile, tablet and desktop
 
 ## Tech Stack
@@ -87,3 +92,6 @@ All endpoints are prefixed with `/api`.
 - `GET /api/search?q=` · `GET /api/search/suggestions?q=`
 - `POST /api/uploads/image` · `DELETE /api/uploads/image`
 
+## License
+
+Private project — all rights reserved.

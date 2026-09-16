@@ -8,7 +8,7 @@ import { cn, timeAgo } from '../../lib/utils.js';
 const TYPE_ICON = { note: FileText, folder: Folder, tag: Tag };
 
 /** Topbar search - instant suggestions, Enter opens the Search Results page */
-const SearchBar = ({ className, autoFocus = false, initialValue = '', onNavigate }) => {
+const SearchBar = ({ className, autoFocus = false, initialValue = '', onNavigate, inputId }) => {
   const [value, setValue] = useState(initialValue);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -71,6 +71,7 @@ const SearchBar = ({ className, autoFocus = false, initialValue = '', onNavigate
       >
         <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft" />
         <input
+          id={inputId}
           value={value}
           autoFocus={autoFocus}
           onChange={(e) => {

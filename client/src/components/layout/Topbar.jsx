@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Menu as MenuIcon, X, Plus } from 'lucide-react';
+import { Bell, Menu as MenuIcon, X, Plus, Sun, Moon, Keyboard } from 'lucide-react';
 import Logo from '../brand/Logo.jsx';
 import SearchBar from './SearchBar.jsx';
 import UserMenu from './UserMenu.jsx';
 import SidebarContent from './Sidebar.jsx';
 import { IconButton, default as Button } from '../ui/Button.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
 
-const Topbar = () => {
+const Topbar = ({ onOpenShortcuts }) => {
   const [drawer, setDrawer] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+  const { isDark, toggle } = useTheme();
 
   return (
     <>
@@ -32,7 +34,7 @@ const Topbar = () => {
 
           {/* search - desktop center, mobile neeche full width */}
           <div className="hidden flex-1 justify-center lg:flex">
-            <SearchBar className="max-w-[520px]" />
+            <SearchBar className="max-w-[520px]" inputId="global-search" />
           </div>
 
           <div className="ml-auto flex items-center gap-1.5">
@@ -40,6 +42,8 @@ const Topbar = () => {
               New Note
             </Button>
 
+            <IconButton icon={isDark ? Sun : Moon} label={isDark ? 'Switch to light mode' : 'Switch to dark mode'} onClick={toggle} />
+            <IconButton icon={Keyboard} label="Keyboard shortcuts" onClick={onOpenShortcuts} />
             <IconButton icon={Bell} label="Notifications" onClick={() => toast.info('Notifications are coming soon')} />
             <UserMenu />
           </div>

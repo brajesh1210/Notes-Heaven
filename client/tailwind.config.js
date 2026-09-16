@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
@@ -17,13 +18,15 @@ export default {
           800: '#1E40AF',
           900: '#1E3A8A',
         },
+        // token colors come from CSS variables so dark mode can swap them
         ink: {
-          DEFAULT: '#0F172A',
-          muted: '#64748B',
-          soft: '#94A3B8',
+          DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+          muted: 'rgb(var(--ink-muted) / <alpha-value>)',
+          soft: 'rgb(var(--ink-soft) / <alpha-value>)',
         },
-        line: '#E2E8F0',
-        canvas: '#F8FAFC',
+        line: 'rgb(var(--line) / <alpha-value>)',
+        canvas: 'rgb(var(--canvas) / <alpha-value>)',
+        surface: 'rgb(var(--surface) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],

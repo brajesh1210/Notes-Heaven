@@ -313,6 +313,71 @@ export const toggleFavorite = asyncHandler(async (req, res) => {
 });
 
 // ------------------------------------------------------------------
+// PATCH /api/notes/bulk  - bulk pin / favorite / trash / restore / move / tag
+// body: { ids: [noteId], action, value }
+// ------------------------------------------------------------------
+export const bulkAction = asyncHandler(async (req, res) => {
+  const { ids, action, value } = req.body;
+  if (!Array.isArray(ids) || ids.length === 0) throw badRequest('No notes selected');
+  const clean = ids.map((id) => String(id)).filter((id) => /^[0-9a-fA-F]{24}$/.test(id));
+  if (!clean.length) throw badRequest('No valid notes selected');
+
+  const notes = await Note.find({ _id: { $in: clean }, user: req.userId });
+  if (!notes.length) throw notFound('Note not found');
+
+  let tagDoc = null;
+  if (action === 'tag') {
+    const name = String(value || '').trim().toLowerCase();
+    if (!name) throw badRequest('Tag name is required');
+    tagDoc = await Tag.findOne({ user: req.userId, name });
+    if (!tagDoc) tagDoc = await Tag.create({ user: req.userId, name });
+  }
+
+  let updated = 0;
+  for (const note of notes) {
+    switch (action) {
+      case 'pin':
+        note.isPinned = Boolean(value);
+        break;
+      case 'favorite':
+        note.isFavorite = Boolean(value);
+        break;
+      case 'trash':
+        if (note.trashedAt) continue;
+        note.moveToTrash();
+        break;
+      case 'restore':
+        if (!note.trashedAt) continue;
+        note.trashedAt = null;
+        note.scheduledFor = null;
+        break;
+      case 'move':
+        note.folder = value || null;
+        break;
+      case 'tag':
+        if (note.tags.some((t) => String(t._id || t) === String(tagDoc._id))) continue;
+        note.tags.push(tagDoc._id);
+        break;
+      default:
+        throw badRequest('Unknown bulk action');
+    }
+    note.lastEditedAt = new Date();
+    await note.save();
+    updated += 1;
+  }
+
+  const labels = {
+    pin: value ? 'pinned' : 'unpinned',
+    favorite: value ? 'added to favorites' : 'removed from favorites',
+    trash: 'moved to trash',
+    restore: 'restored',
+    move: 'moved',
+    tag: `tagged with "${tagDoc?.name}"`,
+  };
+  return ok(res, { updated }, `${updated} note${updated === 1 ? '' : 's'} ${labels[action]}`);
+});
+
+// ------------------------------------------------------------------
 // Versions
 // ------------------------------------------------------------------
 export const getVersions = asyncHandler(async (req, res) => {

@@ -5,6 +5,25 @@
 @layer base {
   :root {
     color-scheme: light;
+    /* light theme tokens (match the approved design exactly) */
+    --ink: 15 23 42;
+    --ink-muted: 100 116 139;
+    --ink-soft: 148 163 184;
+    --line: 226 232 240;
+    --canvas: 248 250 252;
+    --surface: 255 255 255;
+    --surface-2: 248 250 252;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --ink: 226 232 240;
+    --ink-muted: 148 163 184;
+    --ink-soft: 100 116 139;
+    --line: 30 41 59;
+    --canvas: 2 6 23;
+    --surface: 15 23 42;
+    --surface-2: 30 41 59;
   }
 
   html,
@@ -106,6 +125,10 @@
   .chip-muted {
     @apply inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-ink-muted;
   }
+  .checkbox {
+    @apply h-4 w-4 cursor-pointer rounded border-line accent-brand-700;
+  }
+
   .kbd {
     @apply inline-flex items-center rounded border border-line bg-slate-50 px-1.5 py-0.5 text-[11px] font-medium text-ink-muted;
   }
@@ -240,3 +263,36 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ---------------- dark theme surface overrides ---------------- */
+.dark body {
+  background-color: rgb(var(--surface));
+  color: rgb(var(--ink));
+}
+.dark .bg-white { background-color: rgb(var(--surface)); }
+.dark .bg-white\/95 { background-color: rgb(var(--surface) / 0.95); }
+.dark .bg-white\/90 { background-color: rgb(var(--surface) / 0.9); }
+.dark .bg-slate-50,
+.dark .bg-slate-50\/60,
+.dark .bg-slate-50\/70,
+.dark .bg-slate-100 { background-color: rgb(var(--surface-2)); }
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-100:hover { background-color: rgb(var(--surface-2)); }
+.dark .bg-slate-200 { background-color: rgb(51 65 85); }
+.dark .bg-slate-900\/40 { background-color: rgb(0 0 0 / 0.65); }
+.dark .bg-blue-50 { background-color: rgb(23 37 84); }
+.dark .bg-red-50 { background-color: rgb(69 10 10); }
+.dark .bg-amber-50 { background-color: rgb(69 26 3); }
+.dark .bg-emerald-50 { background-color: rgb(6 78 59 / 0.35); }
+.dark .text-blue-800 { color: #bfdbfe; }
+.dark .text-amber-800,
+.dark .text-amber-900 { color: #fcd34d; }
+.dark .border-amber-200 { border-color: rgb(120 53 15); }
+.dark .border-red-200 { border-color: rgb(127 29 29); }
+.dark .card { background-color: rgb(var(--surface)); border-color: rgb(var(--line)); }
+.dark .btn-outline { background-color: rgb(var(--surface)); }
+.dark .input { background-color: rgb(var(--surface-2)); }
+.dark .note-content pre { background: #0b1220; border-color: rgb(var(--line)); }
+.dark .note-content code { background: rgb(51 65 85 / 0.6); }
+.dark .kbd { background: rgb(var(--surface-2)); border-color: rgb(var(--line)); color: rgb(var(--ink-muted)); }
+.dark ::-webkit-scrollbar-thumb { background-color: rgb(51 65 85); }
