@@ -86,6 +86,3 @@ All endpoints are prefixed with `/api`.
 - `GET /api/search?q=` · `GET /api/search/suggestions?q=`
 - `POST /api/uploads/image` · `DELETE /api/uploads/image`
 
-## License
-
-Private project — all rights reserved.
