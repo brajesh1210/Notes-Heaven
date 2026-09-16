@@ -14,6 +14,7 @@ A clean, fast note-management web app for students and lifelong learners. Create
 - **Trash with 5-day safety** — deleted notes are recoverable for 5 days, then permanently removed (manual restore / permanent delete available at any time)
 - **Export** — any note (or all notes) to PDF or Markdown
 - **Authentication** — email + password (JWT in an httpOnly cookie), Google OAuth, and a forgot-password email flow
+- **Profile & account** — avatar upload, name/email editing, password change and account deletion with cascade cleanup
 - **Fully responsive** — the same experience on mobile, tablet and desktop
 
 ## Tech Stack

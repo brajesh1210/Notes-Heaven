@@ -1,14 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, Settings, BookOpen } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import Menu, { MenuItem, MenuDivider, MenuLabel } from '../ui/Menu.jsx';
 import Avatar from '../ui/Avatar.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { useToast } from '../../context/ToastContext.jsx';
 
 const UserMenu = () => {
   const { user, logout, demoMode } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
 
   const handleLogout = async () => {
     await logout();
@@ -37,19 +35,8 @@ const UserMenu = () => {
       <MenuDivider />
       <MenuLabel>Account</MenuLabel>
 
-      <MenuItem icon={User} onClick={() => toast.info('Profile settings are coming soon')}>
+      <MenuItem icon={User} onClick={() => navigate('/profile')}>
         Profile
-      </MenuItem>
-      <MenuItem icon={Settings} onClick={() => navigate('/dashboard')}>
-        Preferences
-      </MenuItem>
-      <MenuItem
-        icon={BookOpen}
-        onClick={() => {
-          toast.info('Notes Heaven v1.0');
-        }}
-      >
-        About
       </MenuItem>
 
       <MenuDivider />

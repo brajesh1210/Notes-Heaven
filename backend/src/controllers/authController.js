@@ -169,9 +169,16 @@ export const changePassword = asyncHandler(async (req, res) => {
 // PUT /api/auth/profile
 // ------------------------------------------------------------------
 export const updateProfile = asyncHandler(async (req, res) => {
-  const { name, avatar, prefs } = req.body;
+  const { name, email, avatar, prefs } = req.body;
   const user = await User.findById(req.userId);
 
+  if (email !== undefined && String(email).toLowerCase() !== user.email) {
+    const clean = String(email).trim().toLowerCase();
+    if (!/^\S+@\S+\.\S+$/.test(clean)) throw badRequest('Please enter a valid email address');
+    const exists = await User.findOne({ email: clean });
+    if (exists) throw conflict('This email is already registered. Please use a different email.');
+    user.email = clean;
+  }
   if (name !== undefined) user.name = name;
   if (avatar !== undefined) user.avatar = avatar;
   if (prefs && typeof prefs === 'object') {

@@ -23,12 +23,13 @@ import SearchResults from './pages/SearchResults.jsx';
 import CreateNote from './pages/notes/CreateNote.jsx';
 import NoteEditorPage from './pages/notes/NoteEditorPage.jsx';
 import NoteView from './pages/notes/NoteView.jsx';
+import Profile from './pages/Profile.jsx';
 
 /**
  * Routes:
  *  Public   : / , /login , /signup , /forgot-password , /reset-password/:token , /auth/callback
  *  Protected: /dashboard , /notes , /notes/new , /notes/:id , /notes/:id/edit ,
- *             /folders , /folders/:id , /search , /trash
+ *             /folders , /folders/:id , /search , /trash , /profile
  */
 const App = () => (
   <Routes>
@@ -65,6 +66,7 @@ const App = () => (
         <Route path="/folders/:id" element={<FolderDetail />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/trash" element={<Trash />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Route>
 

@@ -203,7 +203,14 @@ export const demoApi = async (method, url, { params = {}, data = {} } = {}) => {
   if (path === 'auth/logout') return okRes({}, 'Logged out successfully');
   if (path === 'auth/profile' && m === 'put') {
     db.user = { ...db.user, ...data };
-    return okRes({ user: db.user }, 'Profile updated');
+    return okRes({ user: db.user }, 'Profile updated successfully');
+  }
+  if (path === 'auth/change-password' && m === 'put') {
+    if (!data.newPassword || String(data.newPassword).length < 6) return err(400, 'New password must be at least 6 characters');
+    return okRes({}, 'Password updated successfully');
+  }
+  if (path === 'auth/account' && m === 'delete') {
+    return okRes({}, 'Account and all associated data deleted');
   }
   if (path === 'auth/forgot-password') {
     return okRes({ mailConfigured: false, devResetUrl: '/reset-password/demo-token' }, 'If this email is registered, a reset link has been sent.');

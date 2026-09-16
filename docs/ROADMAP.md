@@ -18,7 +18,7 @@ Notes Heaven is delivered in five phases. Each phase ships as a zip with a merge
 - Full UI matching the approved design, mobile responsive (sidebar drawer, adaptive tables/grids)
 - Demo mode (`npm run dev:demo`) with in-memory data for UI-only runs
 
-## Phase 2 — Integrations go live
+## Phase 2 — Integrations go live (done)
 
 - Google OAuth end-to-end (Google Cloud console setup walk-through included)
 - Cloudinary image upload in the editor (drag-drop, paste, resize), image delete on note/image removal
