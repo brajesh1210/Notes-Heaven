@@ -72,6 +72,7 @@ npm run dev:demo
 ```
 
 Step-by-step Atlas setup, environment variables and a full test checklist: see [`docs/PHASE-1-SETUP.md`](docs/PHASE-1-SETUP.md).
+Production deployment (Render + Vercel + Atlas): see [`docs/PHASE-4-DEPLOY.md`](docs/PHASE-4-DEPLOY.md).
 Planned work: see [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## API Overview

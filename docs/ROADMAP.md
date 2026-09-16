@@ -34,7 +34,7 @@ Notes Heaven is delivered in five phases. Each phase ships as a zip with a merge
 - Note templates (lecture notes, meeting notes, revision sheet)
 - Sortable columns, list/grid view toggle, recent-notes rail
 
-## Phase 4 — Deployment
+## Phase 4 — Deployment (done)
 
 - Backend to Render (health check, env vars, auto-deploy from GitHub)
 - Frontend to Vercel (env vars, preview deploys)

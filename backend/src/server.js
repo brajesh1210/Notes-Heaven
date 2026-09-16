@@ -14,7 +14,7 @@ const start = async () => {
     logger.info(`Health check: http://localhost:${env.port}/api/health`);
   });
 
-  startTrashCleanupJob(60); // har ghante expired trash purge
+  startTrashCleanupJob(60); // purge expired trash every hour
 
   const shutdown = async (signal) => {
     logger.warn(`${signal} received - shutting down server...`);
